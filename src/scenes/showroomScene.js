@@ -128,7 +128,7 @@ export class ShowroomScene {
     this.car = createCar(cfg);
     this.carHolder.add(this.car);
     const L = this.car.userData.car.length;
-    this.dist = 4.6 + L * 1.25;
+    this.dist = 4.2 + L * 1.35;
   }
 
   onResize(w, h) {
@@ -163,7 +163,7 @@ export class ShowroomScene {
     cam.position.set(Math.sin(0.35) * this.dist, 0.6 + Math.sin(this.pitch) * this.dist, Math.cos(0.35) * this.dist);
     cam.lookAt(tgt);
     // shift the view so the car sits left of the side panel
-    cam.setViewOffset(this.engine.width, this.engine.height, -this.offsetX * this.engine.width, 0, this.engine.width, this.engine.height);
+    cam.setViewOffset(this.engine.width, this.engine.height, this.offsetX * this.engine.width, 0, this.engine.width, this.engine.height);
     this.car?.userData.car.setSiren(time);
     this.car?.userData.car.spinWheels(0);
   }

@@ -4,7 +4,7 @@
 import { el, fmt, pick } from '../core/util.js';
 import { t } from '../core/i18n.js';
 import { icon } from './icons.js';
-import { modal, segmented } from './dom.js';
+import { modal } from './dom.js';
 import { STREET_RACERS, NPC_FRIENDS } from '../game/catalog.js';
 import { MODELS, MODEL_IDS } from '../cars/models.js';
 import { defaultConfig } from '../cars/carFactory.js';

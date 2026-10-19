@@ -232,7 +232,7 @@ export class TownScene {
         box(s, sx + 0.4, 0.5, sz + 0.4, mat('#1f4fb6'), cx, 5.1, cz + 2, 0.05);
         for (const ox of [-sx / 2, sx / 2]) for (const oz of [-sz / 2, sz / 2]) box(s, 0.3, 5, 0.3, mat('#d0d4da', { metal: 0.8, rough: 0.2 }), cx + ox, 0.16, cz + 2 + oz, 0.03);
         FEATURED_IDS.forEach((id, i) => {
-          const car = createCar(defaultConfig(id));
+          const car = createCar(defaultConfig(id), { lod: 'low' });
           car.position.set(cx - 6.5 + i * 6.5, 0.36, cz + 2);
           car.rotation.y = -0.6;
           car.scale.setScalar(1.3);
@@ -342,7 +342,7 @@ export class TownScene {
           const friends = NPC_FRIENDS.slice(key === '0,2' ? 0 : 3, key === '0,2' ? 3 : 6);
           friends.forEach((fr, i) => {
             const fx = cx - 12 + i * 12;
-            const car = createCar({ ...fr.car });
+            const car = createCar({ ...fr.car }, { lod: 'low' });
             car.position.set(fx, 0.16, cz - 13.5);
             car.rotation.y = Math.PI / 2;
             s.add(car);
@@ -400,7 +400,7 @@ export class TownScene {
     this.traffic = [];
     for (let i = 0; i < n; i++) {
       const model = pick(NPC_MODEL_IDS);
-      const obj = createCar({ ...defaultConfig(model), paint: Math.random() < 0.5 ? defaultConfig(model).paint : pick(PAINT_COLORS) }, { shadows: false });
+      const obj = createCar({ ...defaultConfig(model), paint: Math.random() < 0.5 ? defaultConfig(model).paint : pick(PAINT_COLORS) }, { shadows: false, lod: 'low' });
       this.scene.add(obj);
       const node = { i: Math.floor(Math.random() * (GRID + 1)), j: Math.floor(Math.random() * (GRID + 1)) };
       const c = { obj, from: node, to: null, t: 0, speed: rand(6, 9), v: 6 };
@@ -541,8 +541,9 @@ export class TownScene {
     let pos;
     let look;
     if (this.camMode === 'chase') {
-      const back = 9 + Math.abs(this.vel) * 0.12;
-      pos = new THREE.Vector3(pp.x - Math.cos(this.heading) * back, 4.6 + Math.abs(this.vel) * 0.05, pp.z + Math.sin(this.heading) * back);
+      const L = this.player.userData.car.length;
+      const back = 3.2 + L * 1.6 + Math.abs(this.vel) * 0.08;
+      pos = new THREE.Vector3(pp.x - Math.cos(this.heading) * back, 2.2 + L * 0.45 + Math.abs(this.vel) * 0.04, pp.z + Math.sin(this.heading) * back);
       look = new THREE.Vector3(pp.x + Math.cos(this.heading) * 4, 1, pp.z - Math.sin(this.heading) * 4);
     } else {
       pos = new THREE.Vector3(pp.x + 18, 22, pp.z + 18);

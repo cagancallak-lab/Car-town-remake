@@ -294,7 +294,7 @@ export class GarageScene {
 
   addCarMesh(car) {
     if (!car.placed) return;
-    const obj = createCar(car.cfg);
+    const obj = createCar(car.cfg, { lod: 'low' });
     this.positionCar(obj, car.placed);
     obj.userData.pick = { type: 'car', id: car.id };
     this.carsGroup.add(obj);
@@ -417,7 +417,7 @@ export class GarageScene {
     friends.forEach((f, i) => {
       const s = spots[i];
       if (!s) return;
-      const obj = createCar({ ...f.car });
+      const obj = createCar({ ...f.car }, { lod: 'low' });
       obj.position.set(s.x, 0, s.z);
       obj.rotation.y = s.rot;
       obj.userData.pick = { type: 'friend', id: f.id };
@@ -510,7 +510,7 @@ export class GarageScene {
     let mesh;
     if (spec.kind === 'car') {
       const car = this.state.getCar(spec.id);
-      mesh = createCar(car.cfg, { shadows: false });
+      mesh = createCar(car.cfg, { shadows: false, lod: 'low' });
       const obj = this.carMeshes.get(spec.id);
       if (obj) obj.visible = false;
     } else {

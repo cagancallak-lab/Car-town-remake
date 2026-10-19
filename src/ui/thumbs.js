@@ -80,7 +80,7 @@ function request(key, make, cb) {
 export function carThumb(cfg, imgEl) {
   const key = `car:${JSON.stringify(cfg)}`;
   request(key, () => {
-    const car = createCar(cfg, { blobShadow: true });
+    const car = createCar(cfg, { blobShadow: true, lod: 'low' });
     const L = car.userData.car.length;
     const url = render(car, { dist: 3.2 + L * 1.55, height: 1.9 + L * 0.35 });
     car.userData.car.dispose();

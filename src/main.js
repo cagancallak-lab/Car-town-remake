@@ -13,7 +13,7 @@ async function boot() {
   const engine = new Engine(document.getElementById('app'));
   // Build every car body once up front so the garage never hitches.
   for (let i = 0; i < MODEL_IDS.length; i++) {
-    warmTemplates([MODEL_IDS[i]]);
+    warmTemplates([MODEL_IDS[i]], 'low');
     bar.style.width = `${Math.round(((i + 1) / (MODEL_IDS.length + 2)) * 100)}%`;
     text.textContent = `Building cars… ${i + 1}/${MODEL_IDS.length}`;
     await frame();

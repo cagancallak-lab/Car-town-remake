@@ -61,7 +61,7 @@ export class CustomerManager {
       livery: Math.random() < 0.15 ? pick(['stripes', 'side', 'number']) : defaultConfig(model).livery,
     };
     if (model === 'police' || model === 'taxi') cfg.paint = defaultConfig(model).paint;
-    const obj = createCar(cfg);
+    const obj = createCar(cfg, { lod: 'low' });
     const services = SERVICES[station.kind];
     const svc = pick(services);
     const R = S.layout;
@@ -271,7 +271,7 @@ export class CustomerManager {
   respray(c) {
     const newCfg = { ...c.cfg, paint: pick(PAINT_COLORS), livery: Math.random() < 0.4 ? pick(['stripes', 'flames', 'side', 'bolt']) : 'none' };
     const old = c.obj;
-    const obj = createCar(newCfg);
+    const obj = createCar(newCfg, { lod: 'low' });
     obj.position.copy(old.position);
     obj.rotation.copy(old.rotation);
     obj.userData.pick = { type: 'customer' };

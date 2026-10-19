@@ -38,7 +38,7 @@ export class GarageTraffic {
     if (this.cars.some((c) => c.lane === lane && Math.abs(c.pos - lane.from) < 6)) return;
     const model = pick(NPC_MODEL_IDS);
     const cfg = { ...defaultConfig(model), paint: Math.random() < 0.6 ? defaultConfig(model).paint : pick(PAINT_COLORS) };
-    const obj = createCar(cfg, { shadows: false });
+    const obj = createCar(cfg, { shadows: false, lod: 'low' });
     this.root.add(obj);
     const c = { obj, lane, pos: lane.from, speed: rand(4.5, 6.5), v: 5 };
     c.max = c.speed;

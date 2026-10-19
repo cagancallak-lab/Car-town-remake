@@ -14,24 +14,25 @@ export class Painter {
    * @param {number} height world height covered by the canvas
    * @param {object} opts { pxPerUnit, x0, y0, flipX, layers }
    */
-  constructor(width, height, { pxPerUnit = 300, x0 = -width / 2, y0 = 0, flipX = false, layers = ['color', 'glow', 'metal'] } = {}) {
+  constructor(width, height, { pxPerUnit = 300, x0 = -width / 2, y0 = 0, flipX = false, layers = ['color', 'glow', 'metal'], maxPx = 1024 } = {}) {
     this.width = width;
     this.height = height;
     this.x0 = x0;
     this.y0 = y0;
     this.flipX = flipX;
-    const s = Math.min(pxPerUnit, 1024 / width, 1024 / height);
+    const s = Math.min(pxPerUnit, maxPx / width, maxPx / height);
     this.scale = s;
     this.pw = Math.max(8, Math.round(width * s));
     this.ph = Math.max(8, Math.round(height * s));
     this.layers = {};
+    this.used = {};
     for (const name of layers) {
       const canvas = document.createElement('canvas');
       canvas.width = this.pw;
       canvas.height = this.ph;
       const ctx = canvas.getContext('2d');
       if (name !== 'color') {
-        ctx.fillStyle = '#000';
+        ctx.fillStyle = name === 'rough' ? gray(0.4) : '#000';
         ctx.fillRect(0, 0, this.pw, this.ph);
       }
       // world -> pixel transform (leave a 1px transparent border so clamped UVs stay clear)
@@ -50,17 +51,58 @@ export class Painter {
 
   /** Fill a Path2D. style: colour string or CanvasGradient factory (ctx)=>gradient */
   fill(path, style, { glow = null, metal = 0, rough = null } = {}) {
+    this.used.color = true;
+    if (glow) this.used.glow = true;
     this._each((ctx, name) => {
+      if (name === 'glass' || name === 'roof') return;
       if (name === 'color') ctx.fillStyle = typeof style === 'function' ? style(ctx) : style;
       else if (name === 'glow') ctx.fillStyle = glow || '#000';
       else if (name === 'metal') ctx.fillStyle = gray(metal);
-      else if (name === 'rough') ctx.fillStyle = gray(rough ?? 0.4);
+      else if (name === 'rough') ctx.fillStyle = gray(rough ?? (metal > 0.5 ? 0.12 : 0.32));
       ctx.fill(path);
     });
   }
 
-  stroke(path, style, width, { glow = null, metal = 0, cap = 'round', join = 'round' } = {}) {
+  /** Marks an area as a separate material layer ('glass' or 'roof' paint) and
+   *  erases decor underneath so the layer shows through. */
+  mask(layer, path) {
+    if (!this.layers[layer]) return;
+    this.used[layer] = true;
     this._each((ctx, name) => {
+      ctx.save();
+      if (name === layer) {
+        ctx.fillStyle = '#fff';
+      } else if (name === 'color') {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.fillStyle = '#000';
+      } else if (name === 'glass' || name === 'roof') {
+        ctx.fillStyle = '#000';
+      } else {
+        ctx.fillStyle = '#000';
+      }
+      ctx.fill(path);
+      ctx.restore();
+    });
+  }
+
+  /** Runs draw() with every layer clipped to path. */
+  clip(path, draw) {
+    this._each((ctx) => {
+      ctx.save();
+      ctx.clip(path);
+    });
+    draw();
+    this._each((ctx) => ctx.restore());
+  }
+
+  glass(path) { this.mask('glass', path); }
+  roof(path) { this.mask('roof', path); }
+
+  stroke(path, style, width, { glow = null, metal = 0, cap = 'round', join = 'round' } = {}) {
+    this.used.color = true;
+    if (glow) this.used.glow = true;
+    this._each((ctx, name) => {
+      if (name === 'glass' || name === 'roof') return;
       ctx.lineWidth = width;
       ctx.lineCap = cap;
       ctx.lineJoin = join;
@@ -83,7 +125,9 @@ export class Painter {
   }
 
   text(str, x, y, size, style, { font = 'Arial Black, Arial, sans-serif', weight = '900', align = 'center', glow = null, metal = 0, italic = false, maxWidth } = {}) {
+    this.used.color = true;
     this._each((ctx, name) => {
+      if (name === 'glass' || name === 'roof') return;
       ctx.save();
       ctx.translate(x, y);
       ctx.scale(this.flipX ? -1 : 1, -1);

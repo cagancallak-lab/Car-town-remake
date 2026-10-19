@@ -3,7 +3,7 @@
 
 import * as THREE from 'three';
 
-export const RIM_STYLES = ['spoke5', 'twin5', 'star', 'multi', 'aero', 'mesh', 'turbine', 'steel', 'classic', 'dish'];
+export const RIM_STYLES = ['spoke5', 'twin5', 'star', 'multi', 'aero', 'mesh', 'turbine', 'steel', 'classic', 'dish', 'smart', 'pixel', 'amg'];
 
 const geoCache = new Map();
 function cached(key, make) {
@@ -11,8 +11,8 @@ function cached(key, make) {
   return geoCache.get(key);
 }
 
-function tyreGeometry(R, width, rimR) {
-  return cached(`tyre:${R}:${width}:${rimR}`, () => {
+function tyreGeometry(R, width, rimR, segs = 40) {
+  return cached(`tyre:${R}:${width}:${rimR}:${segs}`, () => {
     const pts = [];
     const hw = width / 2;
     const rr = Math.min(width * 0.32, (R - rimR) * 0.6);
@@ -29,7 +29,7 @@ function tyreGeometry(R, width, rimR) {
     }
     pts.push(new THREE.Vector2(rimR + (R - rimR) * 0.35, hw * 0.98));
     pts.push(new THREE.Vector2(rimR * 0.97, hw * 0.82));
-    const g = new THREE.LatheGeometry(pts, 40);
+    const g = new THREE.LatheGeometry(pts, segs);
     g.rotateX(Math.PI / 2); // lathe axis Y -> Z (axle)
     return g;
   });
@@ -155,6 +155,40 @@ function rimShape(style) {
       }
       break;
     }
+    case 'smart': {
+      // smart #2 aero wheel: four broad openings in an X, closed centre disc
+      const n = 4;
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * TAU + Math.PI / 4;
+        add((p) => sector(p, 0.42, 0.86, a - 0.5, a + 0.5));
+      }
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * TAU;
+        add((p) => sector(p, 0.88, 0.93, a + 0.12, a + TAU / 8 - 0.12));
+      }
+      break;
+    }
+    case 'pixel': {
+      // IONIQ N Line: five thin spokes with twisted kite-shaped windows
+      const n = 5;
+      const P = (r, ang) => [Math.cos(ang) * r, Math.sin(ang) * r];
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * TAU;
+        holes.push(polyHole([P(0.3, a + 0.18), P(0.62, a + 0.2), P(0.88, a + 0.42), P(0.88, a + 1.06), P(0.6, a + 1.08), P(0.32, a + 0.86)]));
+      }
+      break;
+    }
+    case 'amg': {
+      // AMG twin five-spoke (Y spokes) with wide windows
+      const n = 5;
+      const P = (r, ang) => [Math.cos(ang) * r, Math.sin(ang) * r];
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * TAU;
+        holes.push(polyHole([P(0.3, a + 0.2), P(0.88, a + 0.17), P(0.88, a + TAU / n - 0.17), P(0.3, a + TAU / n - 0.2)]));
+        holes.push(polyHole([P(0.48, a - 0.045), P(0.88, a - 0.06), P(0.88, a + 0.06), P(0.48, a + 0.045)]));
+      }
+      break;
+    }
     case 'dish':
     default: {
       const n = 6;
@@ -169,15 +203,15 @@ function rimShape(style) {
   return shape;
 }
 
-function rimGeometry(style, rimR, depth) {
-  return cached(`rim:${style}:${rimR}:${depth}`, () => {
+function rimGeometry(style, rimR, depth, low = false) {
+  return cached(`rim:${style}:${rimR}:${depth}:${low}`, () => {
     const g = new THREE.ExtrudeGeometry(rimShape(style), {
       depth: depth / rimR,
       bevelEnabled: true,
       bevelThickness: 0.05,
       bevelSize: 0.03,
-      bevelSegments: 2,
-      curveSegments: 18,
+      bevelSegments: low ? 1 : 2,
+      curveSegments: low ? 8 : 18,
     });
     g.scale(rimR, rimR, rimR);
     g.computeVertexNormals();
@@ -205,17 +239,18 @@ export function discMaterial() {
  * Builds one wheel. Returns { group, spin } where spin is the sub-group that
  * rotates around the axle (local z).
  */
-export function buildWheel({ radius, width, style = 'spoke5', rimMaterial, caliperMaterial, rimRatio = 0.66 }) {
+export function buildWheel({ radius, width, style = 'spoke5', rimMaterial, caliperMaterial, rimRatio = 0.66, accentMaterial = null, lod = 'high' }) {
+  const low = lod === 'low';
   const group = new THREE.Group();
   const spin = new THREE.Group();
   group.add(spin);
   const rimR = radius * rimRatio;
-  const tyre = new THREE.Mesh(tyreGeometry(radius, width, rimR), tyreMaterial());
+  const tyre = new THREE.Mesh(tyreGeometry(radius, width, rimR, low ? 18 : 40), tyreMaterial());
   tyre.castShadow = true;
   spin.add(tyre);
 
   const depth = width * 0.12;
-  const rim = new THREE.Mesh(rimGeometry(style, rimR, depth), rimMaterial);
+  const rim = new THREE.Mesh(rimGeometry(style, rimR, depth, low), rimMaterial);
   rim.position.z = width * 0.5 - depth - width * 0.12;
   spin.add(rim);
 
@@ -247,6 +282,16 @@ export function buildWheel({ radius, width, style = 'spoke5', rimMaterial, calip
   cap.position.z = rim.position.z + depth + 0.004;
   cap.scale.z = 0.5;
   spin.add(cap);
+
+  if (accentMaterial) {
+    // machined lip ring on the rim face
+    const lip = new THREE.Mesh(
+      cached(`lip:${rimR}`, () => new THREE.TorusGeometry(rimR * 0.95, rimR * 0.035, 8, 48)),
+      accentMaterial,
+    );
+    lip.position.z = rim.position.z + depth * 0.6;
+    spin.add(lip);
+  }
 
   if (caliperMaterial) {
     const cal = new THREE.Mesh(

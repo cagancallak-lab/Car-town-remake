@@ -26,10 +26,11 @@ const only = q.get('model');
 const ids = only ? only.split(',') : MODEL_IDS;
 const cols = q.get('row') ? ids.length : Math.ceil(Math.sqrt(ids.length));
 ids.forEach((id, i) => {
-  const car = createCar({ model: id, ...(q.get('livery') ? { livery: q.get('livery') } : {}) });
-  const x = (i % cols) * 3.4;
+  const car = createCar({ model: id, ...(q.get('livery') ? { livery: q.get('livery') } : {}) }, { lod: q.get('lod') || 'high' });
+  const sp = Number(q.get('sp') ?? 3.4);
+  const x = (i % cols) * sp;
   const z = Math.floor(i / cols) * 2.6;
-  car.position.set(x - ((cols - 1) * 3.4) / 2, 0, z - (Math.floor((ids.length - 1) / cols) * 2.6) / 2);
+  car.position.set(x - ((cols - 1) * sp) / 2, 0, z - (Math.floor((ids.length - 1) / cols) * 2.6) / 2);
   car.rotation.y = Number(q.get('rot') ?? 0.6);
   scene.add(car);
 });
@@ -37,10 +38,12 @@ ids.forEach((id, i) => {
 const dist = Number(q.get('dist') ?? (ids.length === 1 ? 6 : 22));
 const view = q.get('view') || 'iso';
 const dirs = { iso: [1, 0.75, 1], front: [1, 0.25, 0.05], side: [0.0, 0.2, 1], rear: [-1, 0.35, 0.3], top: [0.01, 1, 0.01], fq: [1, 0.35, 0.6] };
-const d = new THREE.Vector3(...dirs[view]).normalize().multiplyScalar(dist);
+const camQ = q.get('cam');
+const d = new THREE.Vector3(...(camQ ? camQ.split(',').map(Number) : dirs[view])).normalize().multiplyScalar(dist);
+if (q.get('fov')) { camera.fov = Number(q.get('fov')); camera.updateProjectionMatrix(); }
 camera.position.copy(d);
 const controls = new OrbitControls(camera, engine.renderer.domElement);
-controls.target.set(0, 0.5, 0);
+controls.target.set(0, Number(q.get('ty') ?? 0.5), 0);
 controls.update();
 engine.setScene({
   scene, camera,
