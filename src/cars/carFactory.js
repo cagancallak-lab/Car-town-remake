@@ -378,7 +378,14 @@ function getTemplateV2(spec, lod = 'high') {
   {
     const P = new Painter(L, 2.4, { pxPerUnit: 160 * res, x0: -L / 2, y0: -1.2, layers: ['color', 'metal', 'glass', 'roof'], maxPx: 900 * res });
     d.top?.(P, c);
-    add(P, { dir: new THREE.Vector3(0, 1, 0), uDir: new THREE.Vector3(1, 0, 0), u0: -L / 2, uSize: L, vDir: new THREE.Vector3(0, 0, -1), v0: -1.2, vSize: 2.4, minDot: 0.55, offset: off });
+    // over the cabin only the roof itself takes the top decal, not the upward
+    // facing tumblehome below the windows
+    const keep = (a, b2, c2) => {
+      const x = (a.x + b2.x + c2.x) / 3;
+      const y = (a.y + b2.y + c2.y) / 3;
+      return x >= spec.key.cowl || x <= spec.key.rearBase || y > fn.beltAt(x) - 0.01;
+    };
+    add(P, { dir: new THREE.Vector3(0, 1, 0), uDir: new THREE.Vector3(1, 0, 0), u0: -L / 2, uSize: L, vDir: new THREE.Vector3(0, 0, -1), v0: -1.2, vSize: 2.4, minDot: 0.55, offset: off, keep });
   }
   const tpl = { v2: true, lod, spec, body, fn, layers, overlayMats: lightMats, rail, c };
   return tpl;
@@ -422,37 +429,60 @@ function buildPartsV2(group, tpl, cfg, mats) {
   const parts = spec.parts || {};
   const key = spec.key;
   const capMat = (kind) => (kind === 'black' ? trimMat() : kind === 'roof' ? mats.roof : mats.paint);
-  // side mirrors: D-shaped pods on short stalks at the A-pillar base
+  // side mirrors: smooth aero housings on a short arm, mounted on the door
+  // just behind the A-pillar base with the glass facing back
   if (parts.mirrors) {
-    const mx = key.cowl - 0.12;
-    const my = fn.beltAt(mx) + 0.03;
-    const bw = fn.beltWidthAt(mx) - 0.03;
-    const pod = sharedGeo('mirrorPod', () => {
-      const sh = new THREE.Shape();
-      sh.moveTo(-0.04, -0.055);
-      sh.lineTo(0.0, -0.055);
-      sh.quadraticCurveTo(0.065, -0.05, 0.07, 0.0);
-      sh.quadraticCurveTo(0.065, 0.06, 0.0, 0.065);
-      sh.lineTo(-0.04, 0.065);
-      sh.lineTo(-0.04, -0.055);
-      const g = new THREE.ExtrudeGeometry(sh, { depth: 0.17, bevelEnabled: true, bevelSize: 0.018, bevelThickness: 0.025, bevelSegments: 4, curveSegments: 10 });
+    const mx = key.cowl - (parts.mirrorBack ?? 0.16);
+    const my = fn.beltAt(mx) + (parts.mirrorUp ?? 0.075);
+    const bw = fn.beltWidthAt(mx) - 0.025;
+    const shell = sharedGeo('mirrorShell', () => {
+      const g = new THREE.SphereGeometry(1, 28, 18);
+      const p = g.attributes.position;
+      for (let i = 0; i < p.count; i++) {
+        let x = p.getX(i);
+        const y = p.getY(i);
+        const z = p.getZ(i);
+        if (x < 0) x *= 0.25;
+        const t = (z + 1) / 2;
+        const taper = 0.7 + 0.3 * Math.sin((Math.min(1, t * 1.5) * Math.PI) / 2);
+        p.setXYZ(i, x * 0.075 * taper, y * 0.068 * taper - (1 - t) * 0.012, z * 0.13);
+      }
       g.computeVertexNormals();
+      // lower third in a second material group (black base under a body-colour cap)
+      const idx = g.index.array;
+      const top = [];
+      const bottom = [];
+      for (let t = 0; t < idx.length; t += 3) {
+        const cy = (p.getY(idx[t]) + p.getY(idx[t + 1]) + p.getY(idx[t + 2])) / 3;
+        (cy < -0.03 ? bottom : top).push(idx[t], idx[t + 1], idx[t + 2]);
+      }
+      g.setIndex([...top, ...bottom]);
+      g.addGroup(0, top.length, 0);
+      g.addGroup(top.length, bottom.length, 1);
+      return g;
+    });
+    const glassGeo = sharedGeo('mirrorFace', () => {
+      const g = new THREE.CircleGeometry(1, 28);
+      g.scale(0.115, 0.056, 1);
       return g;
     });
     for (const s of [1, -1]) {
       const g = new THREE.Group();
-      const arm = new THREE.Mesh(roundedBox(0.09, 0.035, 0.1, 0.014), trimMat());
-      arm.position.set(0.01, -0.035, s * 0.05);
+      const arm = new THREE.Mesh(roundedBox(0.075, 0.032, 0.11, 0.014), trimMat());
+      arm.position.set(-0.005, -0.03, s * 0.045);
       g.add(arm);
-      const h = new THREE.Mesh(pod, capMat(parts.mirrors === 'white' ? 'paint' : parts.mirrors));
-      h.position.set(0, 0, s > 0 ? 0.08 : -0.08 - 0.17);
+      const cap = capMat(parts.mirrors === 'white' ? 'paint' : parts.mirrors);
+      const h = new THREE.Mesh(shell, [cap, parts.mirrorBase ? trimMat() : cap]);
+      h.position.set(0, 0, s * 0.165);
+      h.scale.z = s;
       h.castShadow = true;
       g.add(h);
-      const mirror = new THREE.Mesh(sharedGeo('mirrorGlass', () => new THREE.PlaneGeometry(0.15, 0.1)), glassMat(0.2));
-      mirror.rotation.y = -Math.PI / 2;
-      mirror.position.set(-0.066, 0.005, s * 0.165);
-      g.add(mirror);
+      const face = new THREE.Mesh(glassGeo, glassMat(0.15));
+      face.rotation.y = -Math.PI / 2;
+      face.position.set(-0.021, -0.004, s * 0.17);
+      g.add(face);
       g.position.set(mx, my, s * bw);
+      g.scale.setScalar(parts.mirrorScale ?? 1);
       group.add(g);
     }
   }
@@ -580,6 +610,29 @@ function buildPartsV2(group, tpl, cfg, mats) {
     const bar2 = bar.clone();
     bar2.position.y = bot + 0.12;
     group.add(bar2);
+  }
+  // aluminium running boards between the wheels
+  if (parts.steps) {
+    const w = spec.body.wheel;
+    const r = w.radius + (w.archGap ?? 0.045);
+    const x0 = w.rear + r + 0.06;
+    const x1 = w.front - r - 0.06;
+    const len = x1 - x0;
+    const alu = sharedMat('stepAlu', () => new THREE.MeshStandardMaterial({ color: 0xb9bec6, metalness: 0.9, roughness: 0.32 }));
+    for (const s of [1, -1]) {
+      const z = s * (fn.widthAt((x0 + x1) / 2) - 0.035);
+      const base = new THREE.Mesh(roundedBox(len, 0.05, 0.13, 0.02), trimMat());
+      base.position.set((x0 + x1) / 2, 0.29, z);
+      group.add(base);
+      const top = new THREE.Mesh(roundedBox(len - 0.04, 0.018, 0.115, 0.008), alu);
+      top.position.set((x0 + x1) / 2, 0.318, z + s * 0.004);
+      group.add(top);
+      for (let k = 0; k < 3; k++) {
+        const strip = new THREE.Mesh(roundedBox(len - 0.12, 0.008, 0.012, 0.004), darkMat());
+        strip.position.set((x0 + x1) / 2, 0.329, z + s * (k - 1) * 0.034);
+        group.add(strip);
+      }
+    }
   }
   if (parts.mudflaps) {
     for (const s of [1, -1]) {

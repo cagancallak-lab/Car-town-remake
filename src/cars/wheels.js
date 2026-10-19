@@ -60,9 +60,11 @@ function polyHole(points) {
   return p;
 }
 
-function rimShape(style) {
+// grow > 0 enlarges the windows and shrinks the outer edge (used for the
+// black cover over a machined rim, leaving thin bright outlines)
+function rimShape(style, grow = 0) {
   const shape = new THREE.Shape();
-  shape.absarc(0, 0, 1, 0, Math.PI * 2, false);
+  shape.absarc(0, 0, 1 - grow * 1.6, 0, Math.PI * 2, false);
   const holes = [];
   const add = (fn) => { const p = new THREE.Path(); fn(p); holes.push(p); };
   const TAU = Math.PI * 2;
@@ -156,25 +158,27 @@ function rimShape(style) {
       break;
     }
     case 'smart': {
-      // smart #2 aero wheel: four broad openings in an X, closed centre disc
+      // smart #2 aero wheel: four slim spokes in an X that flare into the rim,
+      // the windows between them are closed by black aero inserts
       const n = 4;
       for (let i = 0; i < n; i++) {
         const a = (i / n) * TAU + Math.PI / 4;
-        add((p) => sector(p, 0.42, 0.86, a - 0.5, a + 0.5));
-      }
-      for (let i = 0; i < 8; i++) {
-        const a = (i / 8) * TAU;
-        add((p) => sector(p, 0.88, 0.93, a + 0.12, a + TAU / 8 - 0.12));
+        add((p) => sector(p, 0.25 - grow, 0.885 + grow, a + 0.13 - grow * 1.6, a + TAU / n - 0.13 + grow * 1.6));
       }
       break;
     }
     case 'pixel': {
-      // IONIQ N Line: five thin spokes with twisted kite-shaped windows
+      // IONIQ N Line "shuriken": five thin blades that kink part-way out,
+      // leaving big pinwheel windows
       const n = 5;
       const P = (r, ang) => [Math.cos(ang) * r, Math.sin(ang) * r];
       for (let i = 0; i < n; i++) {
         const a = (i / n) * TAU;
-        holes.push(polyHole([P(0.3, a + 0.18), P(0.62, a + 0.2), P(0.88, a + 0.42), P(0.88, a + 1.06), P(0.6, a + 1.08), P(0.32, a + 0.86)]));
+        const b = a + TAU / n;
+        const pts = [P(0.32, a + 0.16), P(0.58, a + 0.16 + 0.14), P(0.86, a + 0.6 + 0.12)];
+        for (let k = 1; k < 6; k++) pts.push(P(0.86, a + 0.72 + ((b + 0.48 - a - 0.72) * k) / 6));
+        pts.push(P(0.86, b + 0.6 - 0.12), P(0.58, b + 0.16 - 0.12), P(0.32, b - 0.12));
+        holes.push(polyHole(pts));
       }
       break;
     }
@@ -203,9 +207,13 @@ function rimShape(style) {
   return shape;
 }
 
-function rimGeometry(style, rimR, depth, low = false) {
-  return cached(`rim:${style}:${rimR}:${depth}:${low}`, () => {
-    const g = new THREE.ExtrudeGeometry(rimShape(style), {
+// concave face: the centre of the rim sits deeper than the lip
+const DISH = { smart: 0.06, steel: 0.04, dish: 0.05, classic: 0.08 };
+const dishZ = (style, r) => -(DISH[style] ?? 0.16) * Math.pow(Math.max(0, 1 - r), 1.5);
+
+function rimGeometry(style, rimR, depth, low = false, grow = 0) {
+  return cached(`rim:${style}:${rimR}:${depth}:${low}:${grow}`, () => {
+    const g = new THREE.ExtrudeGeometry(rimShape(style, grow), {
       depth: depth / rimR,
       bevelEnabled: true,
       bevelThickness: 0.05,
@@ -213,6 +221,21 @@ function rimGeometry(style, rimR, depth, low = false) {
       bevelSegments: low ? 1 : 2,
       curveSegments: low ? 8 : 18,
     });
+    const p = g.attributes.position;
+    for (let i = 0; i < p.count; i++) p.setZ(i, p.getZ(i) + dishZ(style, Math.hypot(p.getX(i), p.getY(i))));
+    g.scale(rimR, rimR, rimR);
+    g.computeVertexNormals();
+    return g;
+  });
+}
+
+// black aero insert that closes the windows of covered rims
+const INSERT_STYLES = new Set(['smart']);
+function insertGeometry(style, rimR) {
+  return cached(`insert:${style}:${rimR}`, () => {
+    const g = new THREE.CircleGeometry(0.9, 48, 0, Math.PI * 2);
+    const p = g.attributes.position;
+    for (let i = 0; i < p.count; i++) p.setZ(i, dishZ(style, Math.hypot(p.getX(i), p.getY(i))) - 0.05);
     g.scale(rimR, rimR, rimR);
     g.computeVertexNormals();
     return g;
@@ -250,9 +273,20 @@ export function buildWheel({ radius, width, style = 'spoke5', rimMaterial, calip
   spin.add(tyre);
 
   const depth = width * 0.12;
-  const rim = new THREE.Mesh(rimGeometry(style, rimR, depth, low), rimMaterial);
+  const covered = INSERT_STYLES.has(style) && accentMaterial;
+  const rim = new THREE.Mesh(rimGeometry(style, rimR, depth, low), covered ? accentMaterial : rimMaterial);
   rim.position.z = width * 0.5 - depth - width * 0.12;
   spin.add(rim);
+  if (covered) {
+    // black spoke faces over the machined rim: only thin bright edges remain
+    const cover = new THREE.Mesh(rimGeometry(style, rimR, depth * 0.5, low, 0.022), rimMaterial);
+    cover.position.z = rim.position.z + depth * 0.5 + 0.003;
+    spin.add(cover);
+    const insertMat = mat(`insert:${rimMaterial.color.getHexString()}`, () => new THREE.MeshStandardMaterial({ color: rimMaterial.color.clone(), roughness: 0.42, metalness: 0 }));
+    const insert = new THREE.Mesh(insertGeometry(style, rimR), insertMat);
+    insert.position.z = rim.position.z + depth * 0.5;
+    spin.add(insert);
+  }
 
   const barrel = new THREE.Mesh(
     cached(`barrel:${rimR}:${width}`, () => new THREE.CylinderGeometry(rimR * 0.98, rimR * 0.98, width * 0.8, 28, 1, true).rotateX(Math.PI / 2)),
@@ -279,11 +313,11 @@ export function buildWheel({ radius, width, style = 'spoke5', rimMaterial, calip
     cached(`cap:${rimR}`, () => new THREE.SphereGeometry(rimR * 0.16, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2).rotateX(Math.PI / 2)),
     rimMaterial,
   );
-  cap.position.z = rim.position.z + depth + 0.004;
+  cap.position.z = rim.position.z + depth + 0.004 + dishZ(style, 0.1) * rimR;
   cap.scale.z = 0.5;
   spin.add(cap);
 
-  if (accentMaterial) {
+  if (accentMaterial && !covered) {
     // machined lip ring on the rim face
     const lip = new THREE.Mesh(
       cached(`lip:${rimR}`, () => new THREE.TorusGeometry(rimR * 0.95, rimR * 0.035, 8, 48)),

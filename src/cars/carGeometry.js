@@ -129,7 +129,7 @@ export function roundedBox(w, h, d, r = 0.02, seg = 2) {
 // Planar-projects a set of triangles from a shell geometry into an overlay
 // geometry with UVs, used to "print" fascias (lights, grilles, plates) and
 // liveries onto the smooth bodies.
-export function projectOverlay(geo, { dir, uDir, vDir, u0, uSize, v0, vSize, minDot = 0.2, offset = 0.0025, materials = null, uFn = null }) {
+export function projectOverlay(geo, { dir, uDir, vDir, u0, uSize, v0, vSize, minDot = 0.2, offset = 0.0025, materials = null, uFn = null, keep = null }) {
   const pos = geo.attributes.position;
   const nor = geo.attributes.normal;
   const idx = geo.index.array;
@@ -157,6 +157,7 @@ export function projectOverlay(geo, { dir, uDir, vDir, u0, uSize, v0, vSize, min
       if (len < 1e-12) continue;
       fn.divideScalar(len);
       if (fn.dot(dir) < minDot) continue;
+      if (keep && !keep(P[0], P[1], P[2])) continue;
       let minU = Infinity; let maxU = -Infinity; let minV = Infinity; let maxV = -Infinity;
       for (let k = 0; k < 3; k++) {
         const u = uFn ? uFn(P[k]) : (P[k].dot(uDir) - u0) / uSize;

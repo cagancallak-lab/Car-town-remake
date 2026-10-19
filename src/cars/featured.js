@@ -33,114 +33,129 @@ export const SMART2 = {
   class: 'Micro EV',
   electric: true,
   scale: 0.62,
-  key: { cowl: 0.8, roofFront: 0.13, roofRear: -1.2, rearBase: -1.31 },
+  key: { cowl: 0.7, roofFront: 0.0, roofRear: -1.18, rearBase: -1.33 },
   body: {
-    length: 2.75,
+    length: 2.76,
     width: 1.66,
-    wheel: { radius: 0.315, width: 0.2, front: 0.93, rear: -0.97, archGap: 0.04 },
-    roof: [[-1.375, 0.6], [-1.372, 0.9], [-1.362, 1.18], [-1.34, 1.38], [-1.28, 1.5], [-1.16, 1.552], [-0.6, 1.57], [0.0, 1.56], [0.13, 1.535], [0.47, 1.24], [0.8, 0.965], [1.0, 0.9], [1.17, 0.83], [1.29, 0.73], [1.35, 0.61], [1.375, 0.47]],
-    belt: [[-1.375, 0.56], [-1.365, 0.96], [-1.31, 1.02], [-0.6, 1.0], [0.3, 0.97], [0.8, 0.94], [0.86, 0.918], [1.0, 0.872], [1.17, 0.8], [1.29, 0.7], [1.35, 0.58], [1.375, 0.45]],
-    sill: [[-1.375, 0.46], [-1.33, 0.34], [-1.2, 0.27], [-0.6, 0.2], [0.6, 0.2], [1.2, 0.27], [1.33, 0.33], [1.375, 0.42]],
-    shoulder: [[-1.375, 0.62], [-1.2, 0.84], [0, 0.84], [1.0, 0.8], [1.375, 0.5]],
-    wBody: [[-1.375, 0.79], [-1.0, 0.82], [0, 0.83], [0.9, 0.83], [1.375, 0.8]],
-    wBelt: [[-1.375, 0.74], [0, 0.785], [1.375, 0.75]],
-    wRoof: [[-1.375, 0.62], [-1.0, 0.67], [0, 0.68], [0.4, 0.66], [1.375, 0.6]],
-    noseDepth: 0.5,
-    noseExp: 2.7,
-    tailDepth: 0.22,
-    tailExp: 4,
-    noseRake: { depth: 0.45, y0: 0.35, y1: 0.95, amount: 0.06 },
-    flare: 0.015,
-    rLow: 0.11,
-    roofEdge: 0.08,
-    keyX: [0.8, 0.13, -1.28],
+    wheel: { radius: 0.325, width: 0.2, front: 0.8, rear: -0.99, archGap: 0.03 },
+    // tall, rounded "bubble": high beltline, short hood, blunt rounded nose,
+    // huge raked windshield
+    roof: [[-1.38, 0.56], [-1.376, 0.86], [-1.365, 1.08], [-1.34, 1.27], [-1.29, 1.4], [-1.18, 1.48], [-0.96, 1.515], [-0.55, 1.53], [-0.15, 1.522], [0.0, 1.505], [0.35, 1.34], [0.7, 1.16], [0.85, 1.135], [1.0, 1.11], [1.12, 1.08], [1.22, 1.04], [1.29, 0.98], [1.335, 0.89], [1.36, 0.76], [1.375, 0.6], [1.38, 0.44]],
+    belt: [[-1.38, 0.54], [-1.374, 0.96], [-1.35, 1.1], [-1.26, 1.14], [-0.9, 1.145], [0, 1.14], [0.55, 1.133], [0.7, 1.128], [0.76, 1.115], [0.85, 1.095], [1.0, 1.07], [1.12, 1.04], [1.22, 1.0], [1.29, 0.94], [1.335, 0.85], [1.36, 0.73], [1.375, 0.57], [1.38, 0.42]],
+    sill: [[-1.38, 0.42], [-1.34, 0.31], [-1.22, 0.25], [-0.7, 0.21], [0.5, 0.21], [1.15, 0.25], [1.32, 0.31], [1.38, 0.4]],
+    shoulder: [[-1.38, 0.66], [-1.2, 0.92], [-0.5, 0.95], [0.5, 0.93], [1.05, 0.86], [1.38, 0.56]],
+    wBody: [[-1.38, 0.8], [-1.0, 0.83], [0, 0.83], [0.8, 0.82], [1.38, 0.78]],
+    wBelt: [[-1.38, 0.72], [-1.0, 0.75], [0, 0.765], [0.8, 0.76], [1.38, 0.74]],
+    wRoof: [[-1.38, 0.58], [-1.0, 0.645], [-0.4, 0.665], [0.2, 0.65], [0.7, 0.6], [1.38, 0.54]],
+    noseDepth: 0.4,
+    noseExp: 2.6,
+    tailDepth: 0.32,
+    tailExp: 2.6,
+    noseRake: { depth: 0.5, y0: 0.32, y1: 1.1, amount: 0.13 },
+    tailRake: { depth: 0.3, y0: 0.55, y1: 1.45, amount: 0.09 },
+    flare: 0.03,
+    rLow: 0.12,
+    roofEdge: 0.07,
+    keyX: [0.7, 0.0, -1.18, -1.33],
   },
-  wheelDef: { style: 'smart', rimRatio: 0.64, rimColor: '#1c1d21', accent: '#9aa0a8', caliper: null },
-  colors: { paint: '#f4f4f1', roof: '#cdb48a', finish: 'pearl', rim: '#1c1d21' },
-  parts: { mirrors: 'white', fin: true, spoiler: 'roof', spoilerColor: 'roof' },
+  wheelDef: { style: 'smart', rimRatio: 0.7, rimColor: '#141518', accent: '#a7b1bd', caliper: null },
+  colors: { paint: '#f4f4f1', roof: '#cdb48a', finish: 'pearl', rim: '#141518' },
+  parts: { mirrors: 'white', mirrorBase: true, mirrorScale: 1.2, mirrorBack: 0.1, mirrorUp: 0.025 },
   stats: { hp: 268, kg: 1300, grip: 1.0, gears: 4, redline: 9000 },
   price: 26000,
   level: 1,
   blurb: 'The new two-seat city car. Tiny footprint, huge personality and a perforated "smile" grille.',
   draw: {
     side(P, c) {
-      const g = greenhouse(c, { aBase: 0.78, aTop: 0.15, rBase: -1.31, rTop: -1.2, windows: [[0.78, -0.5], [-0.86, -1.31]], inset: 0.03 });
+      const g = greenhouse(c, { aBase: 0.7, aTop: 0.0, rBase: -1.33, rTop: -1.18, windows: [[0.7, -0.98]], inset: 0.03, cornerR: 0.08 });
       P.fill(g.surround, GLOSS_BLACK);
       for (const w of g.windows) P.glass(w);
-      // tridion safety cell: champagne pillar behind the door + roof frame
-      P.roof(roundedPoly([[-0.53, g.bot(-0.53) - 0.004], [-0.85, g.bot(-0.85) - 0.004], [-0.85, 2], [-0.53, 2]], 0.03));
-      const roofLine = [];
-      for (let i = 0; i <= 20; i++) {
-        const x = 0.15 + (-1.2 - 0.15) * (i / 20);
-        roofLine.push([x, g.top(x) + 0.004]);
+      // tridion safety cell: champagne frame along the roof that sweeps down
+      // to the beltline behind the side window
+      const edge = [];
+      for (let i = 0; i <= 24; i++) {
+        const x = 0.0 + (-1.18 - 0.0) * (i / 24);
+        edge.push([x, g.top(x) + 0.004]);
       }
-      P.roof(poly([...roofLine, [-1.21, 2], [0.16, 2]]));
-      // doors, handle, skirt, charging flap
-      gap(P, [[0.62, 0.3], [0.655, 0.62], [0.7, 0.93]]);
-      gap(P, [[-0.53, 0.3], [-0.53, 0.99]]);
-      gap(P, [[0.62, 0.3], [-0.53, 0.3]], 0.005);
-      P.fill(crect(-0.32, 0.9, 0.17, 0.028, 0.012), '#2a2c31', { metal: 0.5 });
-      P.fill(rrect(-0.62, 0.19, 1.24, 0.1, 0.03), SATIN_BLACK);
-      P.stroke(crect(-1.14, 0.86, 0.11, 0.08, 0.02), 'rgba(0,0,0,0.45)', 0.005);
+      P.roof(poly([...edge, [-1.19, 2], [0.01, 2]]));
+      const pillar = [[-0.995, 2], [-0.995, g.bot(-0.995) - 0.004]];
+      for (let i = 1; i <= 10; i++) {
+        const x = -0.995 + (-1.345 + 0.995) * (i / 10);
+        pillar.push([x, g.bot(x) - 0.004]);
+      }
+      pillar.push([-1.345, 2]);
+      P.roof(roundedPoly(pillar, 0.025));
+      // long door that reaches over the rear wheel, flush pull handle
+      gap(P, [[0.43, 0.3], [0.45, 0.62], [0.53, 0.95], [0.66, 1.12]]);
+      gap(P, [[-0.98, 0.69], [-0.98, 1.135]]);
+      gap(P, [[0.43, 0.3], [-0.62, 0.3]], 0.005);
+      P.fill(crect(-0.8, 1.085, 0.17, 0.03, 0.013), '#c9ced5', { metal: 1 });
+      P.fill(crect(-0.8, 1.082, 0.14, 0.012, 0.006), '#1c1e22');
+      P.fill(rrect(-0.62, 0.2, 1.06, 0.11, 0.035), SATIN_BLACK);
       // soft shoulder highlight
-      P.stroke(line([[1.1, 0.83], [0, 0.86], [-1.2, 0.87]]), 'rgba(255,255,255,0.35)', 0.012);
+      P.stroke(line([[1.05, 0.86], [0.4, 0.93], [-0.6, 0.95], [-1.2, 0.93]]), 'rgba(255,255,255,0.3)', 0.014);
     },
     front(P) {
-      // perforated "smile" panel
-      const py = 0.5;
-      P.fill(crect(0, py, 1.04, 0.36, 0.16), '#e4e4e1');
-      P.fill(crect(0, py, 1.0, 0.32, 0.14), '#f2f2ef');
-      const rows = 6;
-      const cols = 14;
+      // perforated "smile" grille: raised white panel with staggered slots
+      const py = 0.435;
+      const gw = 1.0;
+      const gh = 0.4;
+      P.fill(crect(0, py, gw + 0.035, gh + 0.035, 0.18), '#d4d5d2');
+      P.fill(crect(0, py, gw, gh, 0.16), '#f4f4f1');
+      const rows = 9;
+      const cols = 13;
       for (let r = 0; r < rows; r++) {
-        for (let k = 0; k < cols; k++) {
-          const x = -0.45 + ((k + (r % 2 ? 0.75 : 0.25)) / cols) * 0.9;
-          const y = py - 0.125 + (r / (rows - 1)) * 0.25;
-          const dx = x / 0.5;
-          const dy = (y - py) / 0.155;
-          if (dx ** 4 + dy ** 4 > 0.8) continue;
-          if (Math.abs(x) < 0.21 && Math.abs(y - py) < 0.075) continue;
-          P.fill(crect(x, y, 0.046, 0.03, 0.012), '#121316');
+        for (let k = 0; k <= cols; k++) {
+          const x = -gw / 2 + ((k + (r % 2 ? 0.5 : 0)) / cols) * gw;
+          const y = py - gh / 2 + 0.035 + (r / (rows - 1)) * (gh - 0.07);
+          const dx = x / (gw / 2 - 0.035);
+          const dy = (y - py) / (gh / 2 - 0.028);
+          if (dx ** 4 + dy ** 4 > 0.92) continue;
+          if (Math.abs(x) < 0.25 && Math.abs(y - py) < 0.07) continue;
+          P.fill(crect(x, y, 0.05, 0.022, 0.011), '#16171a');
         }
       }
-      P.fill(crect(0, py, 0.38, 0.105, 0.012), '#0f1012');
-      P.text('#2', 0, py - 0.002, 0.065, '#f2f2f2', { font: 'Arial, sans-serif', weight: '700' });
-      // big LED "eye" headlights at the upper corners
+      P.fill(crect(0, py, 0.44, 0.115, 0.01), '#101113');
+      P.text('#2', 0, py - 0.002, 0.07, '#f2f2f2', { font: 'Arial, sans-serif', weight: '700' });
       both((s) => {
-        const cx = s * 0.47;
-        const cy = 0.8;
-        const shape = smoothPath([[cx - s * 0.17, cy + 0.0], [cx - s * 0.08, cy + 0.085], [cx + s * 0.1, cy + 0.1], [cx + s * 0.27, cy + 0.07], [cx + s * 0.31, cy + 0.0], [cx + s * 0.16, cy - 0.08], [cx - s * 0.06, cy - 0.085]]);
-        P.fill(shape, '#121318');
-        P.fill(ellipse(cx, cy, 0.13, 0.085), P.radial(cx - s * 0.02, cy + 0.02, 0.15, [[0, '#ffffff'], [0.55, '#e4ecf5'], [1, '#8f9aa8']]), { glow: '#ffffff', metal: 0.3 });
-        P.stroke(ellipse(cx, cy, 0.142, 0.095), '#ffffff', 0.014, { glow: '#ffffff' });
-        P.fill(circle(cx, cy, 0.038), '#c9d3df', { metal: 0.8 });
-        P.fill(crect(cx + s * 0.2, cy + 0.02, 0.12, 0.014, 0.007), '#ffb347', { glow: '#ff9a1a' });
-        // air curtains
-        P.fill(crect(s * 0.64, 0.45, 0.045, 0.22, 0.022), '#121316');
+        // teardrop LED headlight: round outer end, pointed inner end
+        const cy = 0.9;
+        const pts = [[s * 0.33, cy - 0.005], [s * 0.43, cy + 0.06], [s * 0.55, cy + 0.1], [s * 0.68, cy + 0.118], [s * 0.79, cy + 0.1], [s * 0.86, cy + 0.04], [s * 0.84, cy - 0.05], [s * 0.76, cy - 0.105], [s * 0.61, cy - 0.1], [s * 0.46, cy - 0.055]];
+        const lamp = smoothPath(pts);
+        P.fill(lamp, P.linear(0, cy + 0.12, 0, cy - 0.1, [[0, '#c9d0d8'], [0.5, '#6d7681'], [1, '#2a2f37']]), { metal: 1 });
+        P.stroke(lamp, '#ffffff', 0.032, { glow: '#ffffff' });
+        const inner = smoothPath(pts.map(([x, y]) => [s * (0.63 + (Math.abs(x) - 0.63) * 0.62), cy - 0.025 + (y - cy) * 0.42]));
+        P.fill(inner, '#20252c', { metal: 0.8 });
+        P.stroke(smoothPath([[s * 0.45, cy + 0.03], [s * 0.58, cy + 0.06], [s * 0.72, cy + 0.07]], false), '#d0d6de', 0.009, { metal: 1 });
+        P.fill(circle(s * 0.71, cy - 0.01, 0.046), '#aeb5bf', { metal: 1 });
+        P.fill(circle(s * 0.71, cy - 0.01, 0.033), P.radial(s * 0.70, cy - 0.002, 0.033, [[0, '#9fd8cc'], [0.45, '#1f4a48'], [1, '#0a1316']]), { metal: 0.5 });
+        // air curtains at the corners, parking sensors
+        P.fill(crect(s * 0.79, 0.41, 0.048, 0.32, 0.024), '#0f1012');
+        P.fill(circle(s * 0.66, 0.62, 0.012), '#dcdcd8');
       });
-      P.text('smart', 0, 0.74, 0.05, '#3a3c42', { font: 'Arial, sans-serif', weight: '700', metal: 0.7 });
-      P.fill(rrect(-0.8, 0.24, 1.6, 0.09, 0.04), SATIN_BLACK);
+      P.text('smart', 0, 0.925, 0.06, '#34363c', { font: 'Arial, sans-serif', weight: '700', metal: 0.8 });
+      P.fill(rrect(-0.82, 0.21, 1.64, 0.085, 0.04), SATIN_BLACK);
     },
     rear(P) {
-      P.fill(crect(0, 0.985, 1.36, 0.05, 0.022), '#3a0508');
-      P.fill(crect(0, 0.985, 1.32, 0.026, 0.012), '#e0161e', { glow: '#ff2a2a' });
+      P.fill(crect(0, 1.03, 1.38, 0.055, 0.025), '#3a0508');
+      P.fill(crect(0, 1.03, 1.34, 0.026, 0.012), '#e0161e', { glow: '#ff2a2a' });
       both((s) => {
-        P.fill(crect(s * 0.6, 0.94, 0.14, 0.12, 0.05), '#3a0508');
-        P.fill(crect(s * 0.6, 0.95, 0.11, 0.07, 0.03), '#e0161e', { glow: '#ff3030' });
+        P.fill(crect(s * 0.6, 0.98, 0.15, 0.13, 0.05), '#3a0508');
+        P.fill(crect(s * 0.6, 0.99, 0.12, 0.075, 0.03), '#e0161e', { glow: '#ff3030' });
       });
-      P.text('smart', 0, 0.88, 0.05, '#3a3c42', { font: 'Arial, sans-serif', weight: '700', metal: 0.7 });
-      plate(P, 0, 0.6, 'S M 2026', { w: 0.42, h: 0.1 });
+      P.text('smart', 0, 0.9, 0.05, '#3a3c42', { font: 'Arial, sans-serif', weight: '700', metal: 0.7 });
+      plate(P, 0, 0.62, 'S M 2026', { w: 0.42, h: 0.1 });
       P.fill(rrect(-0.78, 0.3, 1.56, 0.17, 0.05), SATIN_BLACK);
     },
     windshield(P, c, proj) {
-      glassPanel(P, proj.length, c.fn.beltWidthAt(c.key.cowl) - 0.11, c.fn.roofWidthAt(c.key.roofFront) - 0.08, { frit: 0.05 });
+      glassPanel(P, proj.length, c.fn.beltWidthAt(c.key.cowl) - 0.1, c.fn.roofWidthAt(c.key.roofFront) - 0.08, { frit: 0.05 });
     },
     backlight(P, c, proj) {
-      const wb = c.fn.beltWidthAt(c.key.rearBase) - 0.12;
+      const wb = c.fn.beltWidthAt(c.key.rearBase) - 0.14;
       glassPanel(P, proj.length, wb, wb - 0.04, { frit: 0.04 });
     },
     top(P) {
-      P.roof(rrect(-1.32, -1.0, 1.42, 2.0, 0));
+      P.roof(rrect(-1.3, -1.0, 1.32, 2.0, 0));
     },
   },
 };
@@ -157,15 +172,15 @@ export const IONIQ3 = {
   class: 'EV Crossover',
   electric: true,
   scale: 0.6,
-  key: { cowl: 0.98, roofFront: 0.0, roofRear: -1.82, rearBase: -1.99 },
+  key: { cowl: 0.98, roofFront: 0.0, roofRear: -1.72, rearBase: -2.0 },
   body: {
     length: 4.2,
-    width: 1.8,
-    wheel: { radius: 0.35, width: 0.23, front: 1.25, rear: -1.43, archGap: 0.045 },
-    roof: [[-2.1, 0.66], [-2.092, 0.88], [-2.065, 1.02], [-2.02, 1.09], [-1.96, 1.16], [-1.86, 1.34], [-1.74, 1.41], [-1.3, 1.465], [-0.5, 1.5], [-0.15, 1.49], [0.0, 1.465], [0.45, 1.24], [0.98, 1.02], [1.2, 0.995], [1.5, 0.968], [1.8, 0.942], [1.98, 0.92], [2.06, 0.87], [2.1, 0.75]],
-    belt: [[-2.1, 0.64], [-2.085, 0.85], [-2.045, 0.995], [-1.99, 1.055], [-1.6, 1.07], [-0.6, 1.05], [0.4, 1.03], [0.98, 1.0], [1.03, 0.985], [1.2, 0.97], [1.5, 0.945], [1.8, 0.919], [1.98, 0.897], [2.06, 0.847], [2.1, 0.73]],
-    sill: [[-2.1, 0.5], [-2.0, 0.36], [-1.8, 0.27], [-1.0, 0.22], [0.8, 0.22], [1.8, 0.27], [2.0, 0.33], [2.1, 0.45]],
-    shoulder: [[-2.1, 0.66], [-1.9, 0.87], [0, 0.85], [1.6, 0.8], [2.1, 0.66]],
+    width: 1.82,
+    wheel: { radius: 0.338, width: 0.235, front: 1.25, rear: -1.43, archGap: 0.05 },
+    roof: [[-2.1, 0.7], [-2.092, 0.92], [-2.065, 1.06], [-2.0, 1.15], [-1.9, 1.23], [-1.72, 1.33], [-1.3, 1.43], [-0.7, 1.5], [-0.3, 1.51], [-0.12, 1.495], [0.0, 1.475], [0.45, 1.27], [0.98, 1.035], [1.2, 0.985], [1.5, 0.9], [1.75, 0.83], [1.92, 0.785], [2.02, 0.757], [2.07, 0.71], [2.1, 0.6]],
+    belt: [[-2.1, 0.68], [-2.088, 0.9], [-2.05, 1.04], [-2.0, 1.1], [-1.6, 1.11], [-0.6, 1.075], [0.4, 1.045], [0.98, 1.03], [1.03, 1.0], [1.2, 0.96], [1.5, 0.877], [1.75, 0.81], [1.92, 0.765], [2.02, 0.737], [2.07, 0.69], [2.1, 0.58]],
+    sill: [[-2.1, 0.5], [-2.0, 0.36], [-1.8, 0.27], [-1.0, 0.22], [0.8, 0.22], [1.7, 0.25], [2.0, 0.26], [2.1, 0.3]],
+    shoulder: [[-2.1, 0.7], [-1.9, 0.9], [0, 0.88], [1.0, 0.86], [1.6, 0.76], [2.1, 0.54]],
     wBody: [[-2.1, 0.84], [-1.5, 0.86], [0, 0.865], [1.3, 0.86], [2.1, 0.83]],
     wBelt: [[-2.1, 0.74], [-1.4, 0.785], [0, 0.8], [1.0, 0.79], [2.1, 0.74]],
     wRoof: [[-2.1, 0.55], [-1.8, 0.6], [-1.0, 0.64], [0, 0.65], [0.6, 0.62], [2.1, 0.55]],
@@ -173,16 +188,16 @@ export const IONIQ3 = {
     noseExp: 3.2,
     tailDepth: 0.3,
     tailExp: 4,
-    noseRake: { depth: 0.4, y0: 0.45, y1: 0.95, amount: 0.07 },
+    noseRake: { depth: 0.4, y0: 0.4, y1: 0.78, amount: 0.06 },
     tailRake: { depth: 0.3, y0: 0.6, y1: 1.1, amount: 0.04 },
     flare: 0.032,
     rLow: 0.1,
     roofEdge: 0.065,
-    keyX: [0.98, 0.0, -1.86, -1.99],
+    keyX: [0.98, 0.0, -1.72, -2.0],
     archTrim: true,
   },
-  wheelDef: { style: 'pixel', rimRatio: 0.7, rimColor: '#141518', accent: null, caliper: '#c8102e' },
-  colors: { paint: '#f1f2f2', roof: null, finish: 'gloss', rim: '#141518', caliper: '#c8102e' },
+  wheelDef: { style: 'pixel', rimRatio: 0.76, rimColor: '#141518', accent: null, caliper: null },
+  colors: { paint: '#f1f2f2', roof: null, finish: 'gloss', rim: '#141518' },
   parts: { mirrors: 'black', fin: true, spoiler: 'roof', spoilerColor: 'black' },
   stats: { hp: 296, kg: 1700, grip: 1.08, gears: 5, redline: 8500 },
   price: 38000,
@@ -191,7 +206,7 @@ export const IONIQ3 = {
   draw: {
     side(P, c) {
       const fn = c.fn;
-      const g = greenhouse(c, { aBase: 0.95, aTop: 0.01, rBase: -1.74, rTop: -1.6, windows: [[0.95, -0.3], [-0.41, -1.16], [-1.26, -1.74]], inset: 0.028 });
+      const g = greenhouse(c, { aBase: 0.95, aTop: 0.01, rBase: -1.62, rTop: -1.36, windows: [[0.95, -0.3], [-0.41, -1.1], [-1.2, -1.62]], inset: 0.028 });
       P.fill(g.surround, GLOSS_BLACK);
       for (const w of g.windows) P.glass(w);
       gap(P, [[0.86, 0.34], [0.86, 0.72], [0.96, 0.99]]);
@@ -203,45 +218,47 @@ export const IONIQ3 = {
       P.stroke(line([[1.8, 0.86], [0.6, 0.875], [-0.6, 0.9], [-1.8, 0.95]]), 'rgba(255,255,255,0.3)', 0.008);
       P.stroke(line([[1.8, 0.848], [0.6, 0.863], [-0.6, 0.888], [-1.8, 0.938]]), 'rgba(0,0,0,0.13)', 0.006);
       // black wheel-arch cladding and rocker (smooth drawn shapes)
-      for (const a of fn.arches) P.fill(archBand(a.x, fn.wheelY, a.r - 0.012, 0.075, { sill: 0.2 }), SATIN_BLACK);
-      P.fill(rrect(-1.02, 0.18, 1.8, 0.16, 0.05), SATIN_BLACK);
+      for (const a of fn.arches) P.fill(archBand(a.x, fn.wheelY, a.r - 0.012, 0.1, { sill: 0.2 }), SATIN_BLACK);
+      P.fill(rrect(-1.06, 0.17, 1.88, 0.27, 0.06), SATIN_BLACK);
       // N Line badge
       P.text('N Line', 1.0, 0.85, 0.05, '#d8dbe0', { italic: true, metal: 0.9, font: 'Arial, sans-serif', weight: '700' });
       P.fill(rrect(0.87, 0.836, 0.03, 0.028, 0.004), '#d61b2a');
       P.stroke(crect(-1.62, 0.98, 0.13, 0.1, 0.025), 'rgba(0,0,0,0.4)', 0.005);
     },
     front(P, c) {
-      const span = c.frontSpan - 0.06;
-      // gloss-black A-shape lower structure with white bumper "wings" outside it
-      const aShape = smoothPath([[-0.3, 0.82], [0.3, 0.82], [0.55, 0.68], [0.82, 0.54], [span, 0.46], [span, 0.27], [-span, 0.27], [-span, 0.46], [-0.82, 0.54], [-0.55, 0.68]], true, 0.3);
-      P.fill(aShape, GLOSS_BLACK);
-      const mesh = smoothPath([[-0.26, 0.78], [0.26, 0.78], [0.64, 0.55], [0.7, 0.38], [-0.7, 0.38], [-0.64, 0.55]], true, 0.3);
-      P.fill(mesh, '#1b1d22');
-      P.clip(mesh, () => {
-        for (let i = -18; i <= 18; i++) {
-          P.stroke(line([[i * 0.045 - 0.25, 0.37], [i * 0.045 + 0.25, 0.8]]), 'rgba(80,84,92,0.7)', 0.006);
-          P.stroke(line([[i * 0.045 + 0.25, 0.37], [i * 0.045 - 0.25, 0.8]]), 'rgba(80,84,92,0.7)', 0.006);
-        }
+      const span = c.frontSpan - 0.04;
+      // gloss-black centre that widens downwards ("A" shape), white bumper
+      // corners outside it, all-black lower bumper
+      const black = roundedPoly([[-0.44, 0.69], [0.44, 0.69], [0.74, 0.43], [span, 0.41], [span, 0.22], [-span, 0.22], [-span, 0.41], [-0.74, 0.43]], 0.03);
+      P.fill(black, GLOSS_BLACK);
+      // lower grille slats and radar panel
+      P.clip(roundedPoly([[-0.6, 0.47], [0.6, 0.47], [0.66, 0.3], [-0.66, 0.3]], 0.03), () => {
+        P.fill(rrect(-0.7, 0.29, 1.4, 0.2, 0), '#15171b');
+        for (let i = 0; i < 5; i++) P.fill(crect(0, 0.315 + i * 0.035, 1.4, 0.012, 0.004), '#2b2e34');
       });
-      P.fill(crect(0, 0.3, span * 1.6, 0.05, 0.02), '#2a2c32');
-      plate(P, 0, 0.52, '21 AJG 754', { w: 0.52, h: 0.11, bandText: 'TR' });
-      // full-width pixel light bar
-      P.fill(crect(0, 0.872, span * 2, 0.052, 0.022), '#0b0c0e');
-      const n = 30;
-      for (let i = 0; i <= n; i++) {
-        const x = -span + 0.03 + ((span * 2 - 0.06) * i) / n;
-        const outer = Math.abs(x) > span - 0.32;
-        const centre = Math.abs(i - n / 2) <= 1;
-        const sz = centre ? 0.032 : 0.022;
-        P.fill(crect(x, 0.872, sz, sz, 0.003), outer || centre ? '#ffffff' : '#5c6068', { glow: outer || centre ? '#ffffff' : '#30333a' });
-      }
-      // H logo on the hood edge
-      P.stroke(ellipse(0, 0.935, 0.075, 0.035), '#cfd3d9', 0.009, { metal: 1 });
-      P.text('H', 0, 0.935, 0.045, '#cfd3d9', { italic: true, metal: 1, font: 'Arial, sans-serif', weight: '900' });
-      // N Line side intakes
+      P.fill(crect(0, 0.4, 0.12, 0.075, 0.008), '#3a3d44', { metal: 0.6 });
+      // diagonal "A" legs and N Line fins
       both((s) => {
-        for (let k = 0; k < 3; k++) P.stroke(line([[s * (0.7 + k * 0.05), 0.33], [s * (0.63 + k * 0.05), 0.5]]), '#2c2f36', 0.014);
+        P.fill(poly([[s * 0.6, 0.44], [s * 0.66, 0.44], [s * 0.86, 0.26], [s * 0.78, 0.26]]), '#26292f', { metal: 0.4 });
+        P.fill(poly([[s * 0.46, 0.66], [s * 0.5, 0.66], [s * 0.7, 0.47], [s * 0.66, 0.47]]), '#202328', { metal: 0.4 });
       });
+      P.fill(crect(0, 0.245, span * 1.7, 0.02, 0.01), '#3c3f46', { metal: 0.5 });
+      plate(P, 0, 0.56, '21 AJG 754', { w: 0.52, h: 0.11, bandText: 'TR' });
+      P.text('IONIQ', 0, 0.493, 0.022, '#d8dbe0', { font: 'Arial, sans-serif', weight: '700', metal: 0.8 });
+      P.text('N Line', -0.62, 0.665, 0.03, '#d8dbe0', { italic: true, metal: 0.9, font: 'Arial, sans-serif', weight: '700' });
+      // full-width pixel light bar under the hood edge
+      P.fill(crect(0, 0.7, span * 2 + 0.06, 0.08, 0.025), '#0b0c0e');
+      P.stroke(line([[-span, 0.745], [span, 0.745]]), 'rgba(255,255,255,0.5)', 0.006);
+      const n = 34;
+      for (let i = 0; i <= n; i++) {
+        const x = -span + 0.05 + ((span * 2 - 0.1) * i) / n;
+        const lit = i % 4 === 0;
+        P.fill(crect(x, 0.69, 0.032, 0.03, 0.004), lit ? '#ffffff' : '#3f434a', { glow: lit ? '#ffffff' : '#1d1f23' });
+      }
+      both((s) => P.fill(crect(s * 0.66, 0.72, 0.5, 0.014, 0.007), '#ffffff', { glow: '#ffffff' }));
+      // H logo on the hood edge
+      P.stroke(ellipse(0, 0.778, 0.075, 0.034), '#cfd3d9', 0.009, { metal: 1 });
+      P.text('H', 0, 0.778, 0.045, '#cfd3d9', { italic: true, metal: 1, font: 'Arial, sans-serif', weight: '900' });
     },
     rear(P, c) {
       const span = c.rearSpan - 0.1;
@@ -282,33 +299,34 @@ export const AMGSUV = {
   class: 'Performance SUV',
   electric: true,
   scale: 0.6,
-  key: { cowl: 1.05, roofFront: 0.1, roofRear: -1.85, rearBase: -2.27 },
+  key: { cowl: 1.05, roofFront: 0.28, roofRear: -1.86, rearBase: -2.22 },
   body: {
     length: 4.85,
-    width: 1.92,
-    wheel: { radius: 0.375, width: 0.27, front: 1.475, rear: -1.495, archGap: 0.04 },
-    roof: [[-2.425, 0.74], [-2.412, 0.97], [-2.375, 1.13], [-2.3, 1.215], [-2.15, 1.38], [-1.85, 1.53], [-1.4, 1.61], [-0.6, 1.64], [-0.05, 1.62], [0.1, 1.592], [0.55, 1.35], [1.05, 1.13], [1.4, 1.106], [1.8, 1.077], [2.2, 1.047], [2.33, 1.02], [2.395, 0.96], [2.425, 0.82]],
-    belt: [[-2.425, 0.72], [-2.405, 0.94], [-2.35, 1.1], [-2.27, 1.16], [-1.9, 1.17], [-0.8, 1.15], [0.6, 1.125], [1.05, 1.11], [1.1, 1.095], [1.4, 1.08], [1.8, 1.05], [2.2, 1.02], [2.33, 0.994], [2.395, 0.934], [2.425, 0.8]],
-    sill: [[-2.425, 0.55], [-2.3, 0.4], [-2.0, 0.3], [-1.2, 0.25], [1.2, 0.25], [2.1, 0.3], [2.35, 0.36], [2.425, 0.45]],
-    shoulder: [[-2.425, 0.82], [-2.0, 0.99], [0, 0.98], [1.8, 0.9], [2.425, 0.78]],
+    width: 1.94,
+    wheel: { radius: 0.38, width: 0.28, front: 1.475, rear: -1.495, archGap: 0.035 },
+    roof: [[-2.425, 0.76], [-2.412, 0.98], [-2.372, 1.12], [-2.28, 1.2], [-2.1, 1.29], [-1.86, 1.37], [-1.5, 1.46], [-0.9, 1.54], [-0.2, 1.575], [0.12, 1.57], [0.28, 1.545], [0.65, 1.31], [1.05, 1.075], [1.4, 1.03], [1.8, 0.945], [2.1, 0.868], [2.25, 0.832], [2.34, 0.805], [2.395, 0.76], [2.425, 0.64]],
+    belt: [[-2.425, 0.74], [-2.405, 0.95], [-2.35, 1.07], [-2.22, 1.11], [-1.9, 1.115], [-0.8, 1.075], [0.6, 1.035], [1.05, 1.025], [1.1, 1.01], [1.4, 1.01], [1.8, 0.925], [2.1, 0.853], [2.25, 0.818], [2.34, 0.79], [2.395, 0.74], [2.425, 0.62]],
+    sill: [[-2.425, 0.55], [-2.3, 0.4], [-2.0, 0.3], [-1.2, 0.25], [1.2, 0.25], [2.1, 0.26], [2.35, 0.27], [2.425, 0.32]],
+    shoulder: [[-2.425, 0.82], [-2.0, 0.97], [0, 0.94], [1.2, 0.92], [1.8, 0.84], [2.425, 0.6]],
     wBody: [[-2.425, 0.9], [-1.5, 0.92], [0, 0.93], [1.5, 0.92], [2.425, 0.89]],
     wBelt: [[-2.425, 0.78], [-1.5, 0.84], [0, 0.86], [1.4, 0.85], [2.425, 0.8]],
     wRoof: [[-2.425, 0.58], [-2.0, 0.64], [-1.0, 0.7], [0, 0.71], [0.6, 0.68], [2.425, 0.62]],
-    hoodRidge: { profile: [[1.1, 0], [1.3, 0.016], [2.0, 0.016], [2.3, 0]], z: [0.36], w: 0.09 },
+    hoodRidge: { profile: [[1.1, 0], [1.3, 0.02], [2.0, 0.02], [2.3, 0]], z: [0.34], w: 0.1 },
+    fenderHump: { front: 0.05, rear: 0.045, spread: 2.1 },
     noseDepth: 0.46,
     noseExp: 3.4,
     tailDepth: 0.4,
     tailExp: 3.5,
-    noseRake: { depth: 0.5, y0: 0.42, y1: 1.02, amount: 0.15 },
-    tailRake: { depth: 0.4, y0: 0.65, y1: 1.25, amount: 0.1 },
-    flare: 0.035,
+    noseRake: { depth: 0.5, y0: 0.4, y1: 0.82, amount: 0.12 },
+    tailRake: { depth: 0.4, y0: 0.65, y1: 1.25, amount: 0.12 },
+    flare: 0.05,
     rLow: 0.11,
     roofEdge: 0.07,
-    keyX: [1.05, 0.1, -1.85, -2.27],
+    keyX: [1.05, 0.28, -1.86, -2.22],
   },
-  wheelDef: { style: 'amg', rimRatio: 0.71, rimColor: '#3a3d43', accent: '#c9ccd1', caliper: '#c8102e' },
-  colors: { paint: '#f2b705', roof: null, finish: 'metallic', rim: '#3a3d43', caliper: '#c8102e' },
-  parts: { mirrors: 'black', roofRails: true, fin: true, spoiler: 'roof', spoilerColor: 'paint' },
+  wheelDef: { style: 'amg', rimRatio: 0.74, rimColor: '#6d737c', accent: '#c9ccd1', caliper: null },
+  colors: { paint: '#f2b705', roof: null, finish: 'metallic', rim: '#6d737c' },
+  parts: { mirrors: 'black', mirrorScale: 1.15, roofRails: true, fin: true, spoiler: 'roof', spoilerColor: 'paint', steps: true },
   stats: { hp: 650, kg: 2350, grip: 1.12, gears: 5, redline: 9000 },
   price: 120000,
   level: 8,
@@ -316,66 +334,69 @@ export const AMGSUV = {
   draw: {
     side(P, c) {
       const fn = c.fn;
-      const g = greenhouse(c, { aBase: 1.02, aTop: 0.12, rBase: -2.06, rTop: -1.8, windows: [[1.02, -0.38], [-0.48, -1.38], [-1.48, -2.06]], inset: 0.03 });
+      const g = greenhouse(c, { aBase: 1.02, aTop: 0.3, rBase: -2.02, rTop: -1.72, windows: [[1.02, -0.38], [-0.48, -1.36], [-1.46, -2.02]], inset: 0.03 });
       P.fill(g.surround, GLOSS_BLACK);
       for (const w of g.windows) P.glass(w);
-      gap(P, [[1.05, 0.34], [1.05, 0.72], [1.04, 1.12]]);
-      gap(P, [[-0.43, 0.32], [-0.43, 1.16]]);
-      gap(P, [[-1.42, 1.18], [-1.38, 0.96], [-1.24, 0.86], [-1.12, 0.72], [-1.08, 0.5], [-1.07, 0.33]]);
-      P.fill(crect(0.5, 1.04, 0.2, 0.032, 0.015), '#202226', { metal: 0.6 });
-      P.fill(crect(-0.85, 1.06, 0.2, 0.032, 0.015), '#202226', { metal: 0.6 });
+      gap(P, [[0.96, 0.34], [0.96, 0.72], [1.0, 1.02]]);
+      // vertical fender vent behind the front wheel
+      P.fill(roundedPoly([[1.01, 0.6], [1.045, 0.6], [1.075, 0.98], [1.04, 0.98]], 0.012), GLOSS_BLACK);
+      gap(P, [[-0.43, 0.32], [-0.43, 1.07]]);
+      gap(P, [[-1.42, 1.1], [-1.38, 0.96], [-1.24, 0.86], [-1.12, 0.72], [-1.08, 0.5], [-1.07, 0.33]]);
+      P.fill(crect(0.5, 0.97, 0.2, 0.032, 0.015), '#202226', { metal: 0.6 });
+      P.fill(crect(-0.85, 0.99, 0.2, 0.032, 0.015), '#202226', { metal: 0.6 });
       // black side skirt with a chrome strip
       P.fill(rrect(-1.07, 0.2, 2.05, 0.15, 0.05), SATIN_BLACK);
       P.fill(rrect(-1.06, 0.33, 2.03, 0.022, 0.01), CHROME, { metal: 1 });
       // sculpted shoulder light-catcher
-      P.stroke(line([[2.1, 0.93], [1.0, 0.96], [0, 0.98], [-1.0, 1.0], [-2.2, 1.01]]), 'rgba(255,255,255,0.28)', 0.012);
-      P.stroke(line([[2.1, 0.915], [1.0, 0.945], [0, 0.965], [-1.0, 0.985], [-2.2, 0.995]]), 'rgba(0,0,0,0.1)', 0.008);
+      P.stroke(line([[2.1, 0.86], [1.0, 0.92], [0, 0.94], [-1.0, 0.96], [-2.2, 0.98]]), 'rgba(255,255,255,0.28)', 0.012);
+      P.stroke(line([[2.1, 0.845], [1.0, 0.905], [0, 0.925], [-1.0, 0.945], [-2.2, 0.965]]), 'rgba(0,0,0,0.1)', 0.008);
       P.text('AMG', 1.25, 0.84, 0.045, '#cfd3d9', { metal: 1, font: 'Arial Black, Arial', weight: '900' });
       void fn;
     },
     front(P, c) {
-      const span = c.frontSpan - 0.06;
-      // lower bumper: splitter, intake band and air curtains
-      P.fill(rrect(-span, 0.26, span * 2, 0.1, 0.04), GLOSS_BLACK);
-      P.fill(rrect(-0.62, 0.3, 1.24, 0.16, 0.06), GLOSS_BLACK);
-      P.fill(rrect(-0.58, 0.345, 1.16, 0.018, 0.009), CHROME, { metal: 1 });
+      const span = c.frontSpan - 0.05;
+      // black lower intake band with a chrome splitter lip
+      P.fill(roundedPoly([[-0.6, 0.44], [0.6, 0.44], [0.7, 0.25], [-0.7, 0.25]], 0.04), GLOSS_BLACK);
+      P.fill(rrect(-span, 0.2, span * 2, 0.06, 0.02), GLOSS_BLACK);
+      P.fill(crect(0, 0.258, 1.56, 0.014, 0.007), CHROME, { metal: 1 });
       both((s) => {
-        const curtain = smoothPath([[s * 0.66, 0.78], [s * 0.88, 0.75], [s * 0.93, 0.42], [s * 0.7, 0.38]], true, 0.25);
-        P.fill(curtain, GLOSS_BLACK);
-        for (let k = 0; k < 3; k++) P.fill(crect(s * (0.73 + k * 0.06), 0.57, 0.016, 0.3, 0.008), '#2b2e34');
-        P.fill(circle(s * 0.52, 0.52, 0.012), 'rgba(0,0,0,0.25)');
+        // air-curtain slots and the big corner intake
+        for (let k = 0; k < 2; k++) P.fill(crect(s * (0.62 + k * 0.075), 0.47, 0.034, 0.22, 0.017), GLOSS_BLACK);
+        P.fill(roundedPoly([[s * 0.8, 0.62], [s * 0.87, 0.64], [s * 1.0, 0.3], [s * 0.8, 0.26]], 0.03), GLOSS_BLACK);
+        P.fill(circle(s * 0.55, 0.6, 0.011), 'rgba(0,0,0,0.3)');
       });
-      // Grille: chrome surround, black field, illuminated vertical bars
-      const frame = smoothPath([[-0.46, 0.92], [0.46, 0.92], [0.49, 0.85], [0.455, 0.5], [0.4, 0.465], [-0.4, 0.465], [-0.455, 0.5], [-0.49, 0.85]], true, 0.22);
-      P.fill(frame, CHROME, { metal: 1 });
-      const inner = smoothPath([[-0.435, 0.898], [0.435, 0.898], [0.462, 0.84], [0.43, 0.515], [0.388, 0.49], [-0.388, 0.49], [-0.43, 0.515], [-0.462, 0.84]], true, 0.22);
-      P.fill(inner, '#060708');
-      const bars = 16;
-      for (let i = 0; i < bars; i++) {
-        const x = -0.4 + (0.8 * (i + 0.5)) / bars;
-        if (Math.abs(x) < 0.12) continue;
-        const h = 0.35 - Math.pow(Math.abs(x) / 0.45, 4) * 0.04;
-        P.fill(crect(x, 0.695, 0.017, h, 0.008), '#f4f8ff', { glow: '#e4efff', metal: 0.6 });
+      // shield grille: arched top, illuminated outline, vertical light bars
+      const arch = (x) => 0.715 + 0.05 * (1 - (x / 0.52) ** 2);
+      const shield = [];
+      for (let i = 0; i <= 20; i++) {
+        const x = -0.5 + i / 20;
+        shield.push([x, arch(x)]);
       }
-      P.fill(circle(0, 0.695, 0.118), CHROME, { metal: 1 });
-      P.fill(circle(0, 0.695, 0.102), '#0e1013');
-      star(P, 0, 0.695, 0.1);
-      plate(P, 0, 0.4, 'S GT 5913', { w: 0.52, h: 0.11, bandText: 'D' });
-      // slim LED headlights with star DRLs, wrapping round the corners
+      shield.push([0.535, 0.6], [0.5, 0.47], [0.44, 0.448], [-0.44, 0.448], [-0.5, 0.47], [-0.535, 0.6]);
+      P.fill(roundedPoly(shield, 0.05), '#eef3fb', { glow: '#c9dcff', metal: 0.5 });
+      const inner = shield.map(([x, y]) => [x * 0.965, 0.6 + (y - 0.6) * 0.92]);
+      P.fill(roundedPoly(inner, 0.045), '#07080a');
+      const bars = 12;
+      for (let i = 0; i < bars; i++) {
+        const x = -0.43 + (0.86 * (i + 0.5)) / bars;
+        if (Math.abs(x) < 0.12) continue;
+        const top = arch(x) - 0.035;
+        P.stroke(smoothPath([[x, top], [x * 1.02, (top + 0.5) / 2], [x * 0.98, 0.5]], false), '#f4f8ff', 0.016, { glow: '#e4efff' });
+      }
+      P.fill(circle(0, 0.6, 0.112), CHROME, { metal: 1 });
+      P.fill(circle(0, 0.6, 0.097), '#0e1013');
+      star(P, 0, 0.6, 0.095);
+      plate(P, 0, 0.37, 'S GT 5913', { w: 0.52, h: 0.11, bandText: 'D' });
+      // hood-front vent slot
+      P.fill(crect(0, 0.8, 0.4, 0.02, 0.01), GLOSS_BLACK);
+      // slim angular LED headlights sweeping up into the fenders
       both((s) => {
-        const lamp = smoothPath([[s * 0.5, 0.845], [s * 0.74, 0.87], [s * 0.98, 0.915], [s * 1.08, 0.965], [s * 1.0, 0.99], [s * 0.74, 0.965], [s * 0.51, 0.932]], true, 0.2);
-        P.fill(lamp, '#0f1218');
-        const lens = smoothPath([[s * 0.53, 0.875], [s * 0.74, 0.898], [s * 0.97, 0.94], [s * 1.04, 0.968], [s * 0.98, 0.974], [s * 0.74, 0.945], [s * 0.54, 0.912]], true, 0.2);
-        P.fill(lens, '#cddbee', { glow: '#8aa4cc', metal: 0.5 });
-        for (let k = 0; k < 2; k++) {
-          const cx = s * (0.66 + k * 0.17);
-          const cy = 0.912 + k * 0.026;
-          for (let a = 0; a < 3; a++) {
-            const ang = Math.PI / 2 + (a * Math.PI * 2) / 3;
-            P.stroke(line([[cx, cy], [cx + Math.cos(ang) * 0.025, cy + Math.sin(ang) * 0.025]]), '#ffffff', 0.008, { glow: '#ffffff' });
-          }
-        }
-        P.stroke(line([[s * 0.54, 0.9], [s * 0.74, 0.925], [s * 0.98, 0.958]]), '#ffffff', 0.008, { glow: '#ffffff' });
+        const lamp = roundedPoly([[s * 0.5, 0.71], [s * 0.78, 0.73], [s * 1.0, 0.765], [s * 1.12, 0.81], [s * 1.08, 0.845], [s * 0.82, 0.815], [s * 0.52, 0.785]], 0.025);
+        P.fill(lamp, '#0d1016', { metal: 0.6 });
+        P.stroke(smoothPath([[s * 0.55, 0.77], [s * 0.8, 0.795], [s * 1.07, 0.835]], false), '#ffffff', 0.012, { glow: '#ffffff' });
+        P.stroke(smoothPath([[s * 0.6, 0.748], [s * 0.84, 0.772], [s * 1.0, 0.795]], false), '#dfe9ff', 0.007, { glow: '#cfe0ff' });
+        P.fill(circle(s * 0.7, 0.752, 0.018), '#3a4250', { metal: 1 });
+        P.fill(circle(s * 0.82, 0.767, 0.018), '#3a4250', { metal: 1 });
       });
     },
     rear(P, c) {
