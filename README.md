@@ -81,7 +81,9 @@ The cars are generated in code; there are no mesh files (`src/cars/`):
 `http://localhost:5173/dev/cars.html?model=amgsuv&view=fq&rot=0&dist=6`.
 It also takes an exact camera (`pos`, `look`, `fov`) and `env=studio` lighting.
 [`docs/cars-vs-photos.jpg`](docs/cars-vs-photos.jpg) shows each featured car
-next to its reference photo, rendered from a camera fitted to that photo.
+next to its reference photo, rendered from a camera fitted to that photo, and
+[`docs/garage-vs-screenshot.jpg`](docs/garage-vs-screenshot.jpg) compares the
+garage with the original game.
 
 ## Project layout
 

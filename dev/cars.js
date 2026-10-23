@@ -52,20 +52,36 @@ engine.setScene({
   onResize(w, h) { camera.aspect = w / h; camera.updateProjectionMatrix(); },
   update() { controls.update(); },
 });
-// env=studio: reflections from a room in the backdrop colour with a softbox
-// overhead, closer to how the reference photos were lit
+// env=studio: reflections from a photo studio in the backdrop colour: floor,
+// a big overhead softbox and two strip lights, closer to the reference photos
 if (q.get('env') === 'studio') {
   const env = new THREE.Scene();
   const wall = scene.background.clone().lerp(new THREE.Color(1, 1, 1), Number(q.get('mix') ?? 0));
+  const basic = (color) => new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide });
   const room = new THREE.Mesh(new THREE.BoxGeometry(30, 14, 30), new THREE.MeshBasicMaterial({ color: wall, side: THREE.BackSide }));
   room.position.y = 6;
   env.add(room);
-  const soft = new THREE.Mesh(new THREE.PlaneGeometry(12, 8), new THREE.MeshBasicMaterial({ color: new THREE.Color(1, 1, 1).multiplyScalar(Number(q.get('soft') ?? 3)) }));
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(29.8, 29.8), basic(ground.material.color.clone().multiplyScalar(0.8)));
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -0.95;
+  env.add(floor);
+  const glow = Number(q.get('soft') ?? 3);
+  const soft = new THREE.Mesh(new THREE.PlaneGeometry(12, 8), basic(new THREE.Color(1, 1, 1).multiplyScalar(glow)));
   soft.position.set(0, 12.9, 0);
   soft.rotation.x = Math.PI / 2;
   env.add(soft);
+  for (const s of [1, -1]) {
+    const strip = new THREE.Mesh(new THREE.PlaneGeometry(10, 1.6), basic(new THREE.Color(1, 1, 1).multiplyScalar(glow * 0.6)));
+    strip.position.set(s * 6, 5, -14.9);
+    env.add(strip);
+    const side = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 6), basic(new THREE.Color(1, 1, 1).multiplyScalar(glow * 0.45)));
+    side.position.set(14.9, 6, s * 6);
+    side.rotation.y = Math.PI / 2;
+    env.add(side);
+  }
   const pm = new THREE.PMREMGenerator(engine.renderer);
   scene.environment = pm.fromScene(env, 0.02).texture;
   pm.dispose();
+  hemi.intensity = Number(q.get('hemi') ?? 0.7);
 }
 window.__ready = true;

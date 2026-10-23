@@ -99,7 +99,16 @@ export class GarageScene {
     this.buildFriends();
     this.traffic = new GarageTraffic(this.root, layout);
     this.fitShadow();
-    this.target.set(this.size / 2 + 1.2, 0, this.size / 2 + 1.2);
+    this.target.set(this.size / 2 + 0.6, 0, this.size / 2 + 0.6);
+    if (!this.userZoom) this.fitZoom();
+  }
+
+  /** Frames the whole lot edge to edge, like the original game's default view. */
+  fitZoom() {
+    const a = this.aspect || 1.6;
+    const span = this.size * Math.SQRT2 + 1.5;
+    this.zoom = clamp(Math.max(span / (2 * a), this.size * 0.5), 4, 22);
+    this.updateCamera();
   }
 
   buildLot() {
@@ -643,7 +652,8 @@ export class GarageScene {
 
   onResize(w, h) {
     this.aspect = w / h;
-    this.updateCamera();
+    if (!this.userZoom && this.size) this.fitZoom();
+    else this.updateCamera();
   }
 
   updateCamera() {
@@ -661,6 +671,7 @@ export class GarageScene {
   }
 
   zoomBy(f) {
+    this.userZoom = true;
     this.zoom = clamp(this.zoom * f, 4, 22);
     this.updateCamera();
   }

@@ -469,17 +469,17 @@ function buildPartsV2(group, tpl, cfg, mats) {
     for (const s of [1, -1]) {
       const g = new THREE.Group();
       const arm = new THREE.Mesh(roundedBox(0.075, 0.032, 0.11, 0.014), trimMat());
-      arm.position.set(-0.005, -0.03, s * 0.045);
+      arm.position.set(-0.005, -0.03, s * 0.035);
       g.add(arm);
       const cap = capMat(parts.mirrors === 'white' ? 'paint' : parts.mirrors);
       const h = new THREE.Mesh(shell, [cap, parts.mirrorBase ? trimMat() : cap]);
-      h.position.set(0, 0, s * 0.165);
+      h.position.set(0, 0, s * 0.14);
       h.scale.z = s;
       h.castShadow = true;
       g.add(h);
       const face = new THREE.Mesh(glassGeo, glassMat(0.15));
       face.rotation.y = -Math.PI / 2;
-      face.position.set(-0.021, -0.004, s * 0.17);
+      face.position.set(-0.021, -0.004, s * 0.145);
       g.add(face);
       g.position.set(mx, my, s * bw);
       g.scale.setScalar(parts.mirrorScale ?? 1);

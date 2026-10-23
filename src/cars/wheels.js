@@ -188,8 +188,9 @@ function rimShape(style, grow = 0) {
       const P = (r, ang) => [Math.cos(ang) * r, Math.sin(ang) * r];
       for (let i = 0; i < n; i++) {
         const a = (i / n) * TAU;
-        holes.push(polyHole([P(0.3, a + 0.2), P(0.88, a + 0.17), P(0.88, a + TAU / n - 0.17), P(0.3, a + TAU / n - 0.2)]));
-        holes.push(polyHole([P(0.48, a - 0.045), P(0.88, a - 0.06), P(0.88, a + 0.06), P(0.48, a + 0.045)]));
+        const g = grow;
+        holes.push(polyHole([P(0.3 - g, a + 0.2 - g * 1.4), P(0.88 + g, a + 0.17 - g), P(0.88 + g, a + TAU / n - 0.17 + g), P(0.3 - g, a + TAU / n - 0.2 + g * 1.4)]));
+        holes.push(polyHole([P(0.48 - g, a - 0.045 - g * 0.6), P(0.88 + g, a - 0.06 - g * 0.6), P(0.88 + g, a + 0.06 + g * 0.6), P(0.48 - g, a + 0.045 + g * 0.6)]));
       }
       break;
     }
@@ -229,8 +230,13 @@ function rimGeometry(style, rimR, depth, low = false, grow = 0) {
   });
 }
 
-// black aero insert that closes the windows of covered rims
-const INSERT_STYLES = new Set(['smart']);
+// Two-tone rims. smart: black spoke faces over a machined rim (bright
+// outlines) with black aero inserts closing the windows. amg: machined
+// spoke faces over a dark gunmetal rim.
+const TWO_TONE = {
+  smart: { base: 'accent', cover: 'rim', grow: 0.022, insert: true },
+  amg: { base: 'rim', cover: 'accent', grow: 0.03, insert: false },
+};
 function insertGeometry(style, rimR) {
   return cached(`insert:${style}:${rimR}`, () => {
     const g = new THREE.CircleGeometry(0.9, 48, 0, Math.PI * 2);
@@ -273,15 +279,18 @@ export function buildWheel({ radius, width, style = 'spoke5', rimMaterial, calip
   spin.add(tyre);
 
   const depth = width * 0.12;
-  const covered = INSERT_STYLES.has(style) && accentMaterial;
-  const rim = new THREE.Mesh(rimGeometry(style, rimR, depth, low), covered ? accentMaterial : rimMaterial);
+  const tone = accentMaterial ? TWO_TONE[style] : null;
+  const pick = (k) => (k === 'accent' ? accentMaterial : rimMaterial);
+  const rim = new THREE.Mesh(rimGeometry(style, rimR, depth, low), tone ? pick(tone.base) : rimMaterial);
   rim.position.z = width * 0.5 - depth - width * 0.12;
   spin.add(rim);
-  if (covered) {
-    // black spoke faces over the machined rim: only thin bright edges remain
-    const cover = new THREE.Mesh(rimGeometry(style, rimR, depth * 0.5, low, 0.022), rimMaterial);
+  if (tone) {
+    // thinner copy of the spokes on top, so the base shows as edges
+    const cover = new THREE.Mesh(rimGeometry(style, rimR, depth * 0.5, low, tone.grow), pick(tone.cover));
     cover.position.z = rim.position.z + depth * 0.5 + 0.003;
     spin.add(cover);
+  }
+  if (tone?.insert) {
     const insertMat = mat(`insert:${rimMaterial.color.getHexString()}`, () => new THREE.MeshStandardMaterial({ color: rimMaterial.color.clone(), roughness: 0.42, metalness: 0 }));
     const insert = new THREE.Mesh(insertGeometry(style, rimR), insertMat);
     insert.position.z = rim.position.z + depth * 0.5;
@@ -317,7 +326,7 @@ export function buildWheel({ radius, width, style = 'spoke5', rimMaterial, calip
   cap.scale.z = 0.5;
   spin.add(cap);
 
-  if (accentMaterial && !covered) {
+  if (accentMaterial && !tone) {
     // machined lip ring on the rim face
     const lip = new THREE.Mesh(
       cached(`lip:${rimR}`, () => new THREE.TorusGeometry(rimR * 0.95, rimR * 0.035, 8, 48)),
