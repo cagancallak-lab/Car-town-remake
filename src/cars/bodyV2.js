@@ -159,6 +159,8 @@ export function buildBodyV2(b, lod = 'high') {
     for (let k = 1; k < Q.arch; k++) xs.push(a.x - a.r + (2 * a.r * k) / Q.arch);
   }
   for (const k of b.keyX || []) for (const d of Q.key) xs.push(k + d);
+  // open pickup bed: near-vertical bulkhead and tailgate walls
+  if (b.bed) for (const e of [b.bed.x0, b.bed.x1]) for (const d of [-0.03, -0.012, 0, 0.012, 0.03]) xs.push(e + d);
   xs.sort((p, q) => p - q);
   const sx = [];
   for (const x of xs) if (x >= -half && x <= half && (!sx.length || x - sx[sx.length - 1] > 0.004)) sx.push(x);
@@ -244,6 +246,29 @@ export function buildBodyV2(b, lod = 'high') {
       }
     }
     if (!catsTemplate) catsTemplate = cats;
+    // open pickup bed: the top of the section between the rails drops to the
+    // bed floor, giving a real tub with inner walls, bulkhead and tailgate
+    let bedT = 0;
+    if (b.bed) {
+      const e = 0.012;
+      bedT = smoothstep(b.bed.x1 - e, b.bed.x1 + e, x) * (1 - smoothstep(b.bed.x0 - e, b.bed.x0 + e, x));
+      if (bedT > 0) {
+        const r0 = cats.indexOf('roof');
+        const m = pts.length - r0;
+        const z0 = pts[r0][0];
+        const top = pts[r0][1];
+        const zIn = Math.max(0.05, z0 - (b.bed.rail ?? 0.07));
+        const floorY = Math.min(b.bed.floor, top - 0.05);
+        for (let k = 1; k < m; k++) {
+          let z;
+          let y;
+          if (k === 1) { z = zIn; y = top; } else if (k === 2) { z = zIn - 0.006; y = floorY; } else { z = (zIn - 0.02) * (1 - (k - 3) / Math.max(1, m - 4)); y = floorY; }
+          const q = pts[r0 + k];
+          q[0] = lerp(q[0], z, bedT);
+          q[1] = lerp(q[1], y, bedT);
+        }
+      }
+    }
     // rake: lean the nose / tail faces back so they are not vertical walls
     const rakeX = (y) => {
       let dx = 0;
@@ -263,16 +288,20 @@ export function buildBodyV2(b, lod = 'high') {
     for (const [z, y] of pts) ring.push(new THREE.Vector3(x + rakeX(y), y, z));
     for (let k = pts.length - 2; k >= 1; k--) ring.push(new THREE.Vector3(x + rakeX(pts[k][1]), pts[k][1], -pts[k][0]));
     rings.push(ring);
-    meta.push({ x, wb, yB, yR, inArch: yW > yF + 0.01 });
+    meta.push({ x, wb, yB, yR, inArch: yW > yF + 0.01, bed: bedT });
   }
   const per = rings[0].length;
   const halfCount = catsTemplate.length;
   const catOf = (j) => catsTemplate[j < halfCount ? j : per - j];
+  const roof0 = catsTemplate.indexOf('roof');
+  const roofIdx = (j) => (j < halfCount ? j : per - j) - roof0;
   const claddingY = b.claddingY ?? -1;
   const archBand = b.archCladding ?? 0;
   const classify = (i, j) => {
     const c = catOf(j);
     if (c === 'well' || c === 'floor') return MAT.TRIM;
+    // bed liner: floor and inner walls of an open bed
+    if (b.bed?.liner && c === 'roof' && roofIdx(j) >= 1 && roofIdx((j + 1) % per) >= 1 && meta[i].bed > 0.02 && meta[i + 1].bed > 0.02) return MAT.TRIM;
     if (b.archTrim && c === 'lower' && (meta[i].inArch || meta[i + 1].inArch)) return MAT.TRIM;
     const p = rings[i][j];
     const q = rings[i + 1][(j + 1) % per];

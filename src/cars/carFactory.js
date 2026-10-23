@@ -344,6 +344,26 @@ function getTemplateV2(spec, lod = 'high') {
     d.front?.(P, c);
     add(P, { dir: new THREE.Vector3(1, 0, 0), uFn: (p) => 0.5 - (Math.sign(p.z) * fn.wrapFront(Math.abs(p.z))) / Wf, vDir: new THREE.Vector3(0, 1, 0), v0: 0, vSize: H, minDot: 0.12, offset: off }, { emissive: true });
   }
+  // upper nose corners (headlights that sit where the face rolls into the
+  // hood): projected from forward-and-up. Drawing y stays the height on the
+  // front face and grows by (half - x) * tan(tilt) going back over the hood.
+  if (d.frontUpper) {
+    const tilt = spec.frontUpperTilt ?? 0.7;
+    const Wf = frontSpan * 2 + 0.1;
+    const P = new Painter(Wf, H, { pxPerUnit: 420 * res, x0: -Wf / 2, y0: 0, layers: ['color', 'glow', 'metal'], maxPx: 1400 * res });
+    d.frontUpper(P, c);
+    const reach = fn.half - (b.noseDepth ?? 0.45) * 1.6;
+    add(P, {
+      dir: new THREE.Vector3(Math.cos(tilt), Math.sin(tilt), 0),
+      uFn: (p) => 0.5 - (Math.sign(p.z) * fn.wrapFront(Math.abs(p.z))) / Wf,
+      vDir: new THREE.Vector3(-Math.tan(tilt), 1, 0),
+      v0: -fn.half * Math.tan(tilt),
+      vSize: H,
+      minDot: 0.2,
+      offset: off + 0.001,
+      keep: (a, b2, c2) => (a.x + b2.x + c2.x) / 3 > reach,
+    }, { emissive: true });
+  }
   {
     const Wr = rearSpan * 2 + 0.1;
     const P = new Painter(Wr, H, { pxPerUnit: 360 * res, x0: -Wr / 2, y0: 0, layers: ['color', 'glow', 'metal'], maxPx: 1200 * res });
