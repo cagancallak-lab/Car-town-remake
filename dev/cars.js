@@ -46,6 +46,11 @@ camera.position.copy(q.get('pos') ? new THREE.Vector3(...q.get('pos').split(',')
 const controls = new OrbitControls(camera, engine.renderer.domElement);
 if (q.get('look')) controls.target.set(...q.get('look').split(',').map(Number));
 else controls.target.set(0, Number(q.get('ty') ?? 0.5), 0);
+// roll=deg tilts the camera like a hand-held photo
+if (q.get('roll')) {
+  const fwd = controls.target.clone().sub(camera.position).normalize();
+  camera.up.set(0, 1, 0).applyAxisAngle(fwd, (-Number(q.get('roll')) * Math.PI) / 180);
+}
 controls.update();
 engine.setScene({
   scene, camera,

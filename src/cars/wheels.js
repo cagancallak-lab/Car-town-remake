@@ -3,7 +3,7 @@
 
 import * as THREE from 'three';
 
-export const RIM_STYLES = ['spoke5', 'twin5', 'star', 'multi', 'aero', 'mesh', 'turbine', 'steel', 'classic', 'dish', 'smart', 'pixel', 'amg'];
+export const RIM_STYLES = ['spoke5', 'twin5', 'star', 'multi', 'aero', 'mesh', 'turbine', 'steel', 'classic', 'dish', 'smart', 'pixel', 'amg', 'disc', 'blade', 'six'];
 
 const geoCache = new Map();
 function cached(key, make) {
@@ -194,6 +194,34 @@ function rimShape(style, grow = 0) {
       }
       break;
     }
+    case 'disc': {
+      // polished closed disc with five small slots round the hub
+      const n = 5;
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * TAU;
+        add((p) => sector(p, 0.26, 0.42, a - 0.22, a + 0.22));
+      }
+      break;
+    }
+    case 'blade': {
+      // Opel-style twisted blades: ten slim swept windows
+      const n = 10;
+      const P = (r, ang) => [Math.cos(ang) * r, Math.sin(ang) * r];
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * TAU;
+        holes.push(polyHole([P(0.36, a), P(0.6, a + 0.2), P(0.86, a + 0.34), P(0.86, a + 0.5), P(0.6, a + 0.36), P(0.36, a + 0.2)]));
+      }
+      break;
+    }
+    case 'six': {
+      // six chunky truck spokes
+      const n = 6;
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * TAU;
+        add((p) => sector(p, 0.34, 0.86, a + 0.24, a + TAU / n - 0.24));
+      }
+      break;
+    }
     case 'dish':
     default: {
       const n = 6;
@@ -209,7 +237,7 @@ function rimShape(style, grow = 0) {
 }
 
 // concave face: the centre of the rim sits deeper than the lip
-const DISH = { smart: 0.06, steel: 0.04, dish: 0.05, classic: 0.08 };
+const DISH = { smart: 0.06, steel: 0.04, dish: 0.05, classic: 0.08, disc: 0.1 };
 const dishZ = (style, r) => -(DISH[style] ?? 0.16) * Math.pow(Math.max(0, 1 - r), 1.5);
 
 function rimGeometry(style, rimR, depth, low = false, grow = 0) {
@@ -236,6 +264,7 @@ function rimGeometry(style, rimR, depth, low = false, grow = 0) {
 const TWO_TONE = {
   smart: { base: 'accent', cover: 'rim', grow: 0.022, insert: true },
   amg: { base: 'rim', cover: 'accent', grow: 0.03, insert: false },
+  blade: { base: 'rim', cover: 'accent', grow: 0.03, insert: false },
 };
 function insertGeometry(style, rimR) {
   return cached(`insert:${style}:${rimR}`, () => {

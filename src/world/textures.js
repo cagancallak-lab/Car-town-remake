@@ -296,11 +296,12 @@ export function billboardTexture() {
     ctx.strokeText('CAR TOWN', w / 2, 92);
     ctx.fillStyle = '#ffd21a';
     ctx.fillText('CAR TOWN', w / 2, 92);
-    ctx.font = '800 30px Arial';
+    ctx.font = '800 26px Arial';
     ctx.fillStyle = '#fff';
-    ctx.fillText('NEW: smart #2 · IONIQ 3 · AMG', w / 2, 150);
-    ctx.font = '700 24px Arial';
-    ctx.fillText('at the Car Dealer today!', w / 2, 196);
+    ctx.fillText('NEW: smart #2 · IONIQ 3 · AMG', w / 2, 140, w - 40);
+    ctx.fillText('Frontera · Musso · Vapid', w / 2, 174, w - 40);
+    ctx.font = '700 22px Arial';
+    ctx.fillText('at the Car Dealer today!', w / 2, 208, w - 40);
   });
 }
 

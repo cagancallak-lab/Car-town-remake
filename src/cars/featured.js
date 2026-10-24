@@ -322,8 +322,8 @@ export const AMGSUV = {
     length: 4.75,
     width: 1.94,
     wheel: { radius: 0.38, width: 0.28, front: 1.525, rear: -1.445, archGap: 0.035 },
-    roof: [[-2.375, 0.76], [-2.362, 0.98], [-2.322, 1.12], [-2.23, 1.2], [-2.05, 1.29], [-1.81, 1.37], [-1.45, 1.46], [-0.85, 1.54], [-0.15, 1.575], [0.17, 1.57], [0.33, 1.545], [0.7, 1.29], [1.1, 1.03], [1.45, 0.975], [1.816, 0.9], [2.084, 0.815], [2.218, 0.765], [2.299, 0.73], [2.348, 0.69], [2.375, 0.58]],
-    belt: [[-2.375, 0.74], [-2.355, 0.95], [-2.3, 1.07], [-2.17, 1.11], [-1.85, 1.115], [-0.75, 1.06], [0.65, 1.0], [1.1, 0.985], [1.15, 0.972], [1.45, 0.94], [1.816, 0.885], [2.084, 0.805], [2.218, 0.755], [2.299, 0.72], [2.348, 0.68], [2.375, 0.565]],
+    roof: [[-2.375, 0.76], [-2.362, 0.98], [-2.322, 1.12], [-2.23, 1.2], [-2.05, 1.29], [-1.81, 1.37], [-1.45, 1.46], [-0.85, 1.54], [-0.15, 1.575], [0.17, 1.57], [0.33, 1.545], [0.7, 1.29], [1.1, 1.03], [1.45, 0.97], [1.816, 0.882], [2.084, 0.778], [2.218, 0.722], [2.299, 0.682], [2.348, 0.642], [2.375, 0.55]],
+    belt: [[-2.375, 0.74], [-2.355, 0.95], [-2.3, 1.07], [-2.17, 1.11], [-1.85, 1.115], [-0.75, 1.06], [0.65, 1.0], [1.1, 0.985], [1.15, 0.972], [1.45, 0.935], [1.816, 0.867], [2.084, 0.768], [2.218, 0.712], [2.299, 0.672], [2.348, 0.632], [2.375, 0.535]],
     sill: [[-2.375, 0.55], [-2.25, 0.4], [-1.95, 0.3], [-1.15, 0.25], [1.25, 0.25], [2.084, 0.26], [2.308, 0.27], [2.375, 0.32]],
     shoulder: [[-2.375, 0.82], [-1.95, 0.97], [0.05, 0.92], [1.25, 0.88], [1.816, 0.82], [2.375, 0.6]],
     wBody: [[-2.375, 0.9], [-1.45, 0.92], [0.05, 0.93], [1.547, 0.92], [2.375, 0.89]],
@@ -335,7 +335,7 @@ export const AMGSUV = {
     noseExp: 3.4,
     tailDepth: 0.4,
     tailExp: 3.5,
-    noseRake: { depth: 0.45, y0: 0.4, y1: 0.78, amount: 0.06 },
+    noseRake: { depth: 0.45, y0: 0.4, y1: 0.72, amount: 0.06 },
     tailRake: { depth: 0.4, y0: 0.65, y1: 1.25, amount: 0.12 },
     flare: 0.065,
     rLow: 0.11,
@@ -374,7 +374,7 @@ export const AMGSUV = {
     front(P, c) {
       const span = c.frontSpan - 0.05;
       // black lower intake band with a chrome splitter lip
-      P.fill(roundedPoly([[-0.62, 0.43], [0.62, 0.43], [0.7, 0.25], [-0.7, 0.25]], 0.04), GLOSS_BLACK);
+      P.fill(roundedPoly([[-0.64, 0.4], [0.64, 0.4], [0.72, 0.25], [-0.72, 0.25]], 0.04), GLOSS_BLACK);
       P.fill(rrect(-span, 0.2, span * 2, 0.06, 0.02), GLOSS_BLACK);
       P.fill(crect(0, 0.258, 1.56, 0.014, 0.007), CHROME, { metal: 1 });
       both((s) => {
@@ -385,56 +385,55 @@ export const AMGSUV = {
       });
       // shield grille right under the hood edge: rounded corners, flat top,
       // illuminated outline and curved vertical light bars
-      const top = (x) => 0.705 + 0.012 * (1 - (x / 0.5) ** 2);
+      const top = (x) => 0.632 + 0.014 * (1 - (x / 0.54) ** 2);
       const shield = [];
       for (let i = 0; i <= 20; i++) {
-        const x = -0.48 + (0.96 * i) / 20;
+        const x = -0.52 + (1.04 * i) / 20;
         shield.push([x, top(x)]);
       }
-      shield.push([0.54, 0.63], [0.535, 0.5], [0.49, 0.43], [0.4, 0.415], [-0.4, 0.415], [-0.49, 0.43], [-0.535, 0.5], [-0.54, 0.63]);
+      shield.push([0.585, 0.565], [0.58, 0.46], [0.53, 0.395], [0.43, 0.38], [-0.43, 0.38], [-0.53, 0.395], [-0.58, 0.46], [-0.585, 0.565]);
       P.fill(roundedPoly(shield, 0.07), '#eef3fb', { glow: '#c9dcff', metal: 0.5 });
-      const inner = shield.map(([x, y]) => [x * 0.984, 0.565 + (y - 0.565) * 0.965]);
+      const inner = shield.map(([x, y]) => [x * 0.984, 0.51 + (y - 0.51) * 0.96]);
       P.fill(roundedPoly(inner, 0.065), '#07080a');
       const bars = 12;
       for (let i = 0; i < bars; i++) {
-        const x = -0.44 + (0.88 * (i + 0.5)) / bars;
+        const x = -0.48 + (0.96 * (i + 0.5)) / bars;
         if (Math.abs(x) < 0.13) continue;
         const y0 = top(x) - 0.045;
-        const y1 = 0.47 + Math.abs(x) * 0.06;
+        const y1 = 0.425 + Math.abs(x) * 0.06;
         P.stroke(smoothPath([[x * 1.03, y0], [x * 1.0, (y0 + y1) / 2], [x * 0.95, y1]], false), '#f4f8ff', 0.022, { glow: '#e4efff' });
       }
-      P.fill(circle(0, 0.57, 0.105), CHROME, { metal: 1 });
-      P.fill(circle(0, 0.57, 0.09), '#0e1013');
-      star(P, 0, 0.57, 0.088);
-      P.text('GT 63', 0.33, 0.5, 0.026, '#9aa0a8', { metal: 1, font: 'Arial, sans-serif', weight: '700' });
-      plate(P, 0, 0.385, 'S GT 5913', { w: 0.52, h: 0.11, bandText: 'D' });
+      P.fill(circle(0, 0.5, 0.1), CHROME, { metal: 1 });
+      P.fill(circle(0, 0.5, 0.086), '#0e1013');
+      star(P, 0, 0.5, 0.084);
+      P.text('GT 63', 0.33, 0.45, 0.026, '#9aa0a8', { metal: 1, font: 'Arial, sans-serif', weight: '700' });
+      plate(P, 0, 0.33, 'S GT 5913', { w: 0.52, h: 0.11, bandText: 'D' });
       // hood-front vent above the grille
-      P.fill(crect(0, 0.755, 0.44, 0.018, 0.009), GLOSS_BLACK);
+      P.fill(crect(0, 0.668, 0.44, 0.018, 0.009), GLOSS_BLACK);
     },
     frontUpper(P) {
-      // curved blade headlights on the rolled nose corners: tall rounded
-      // outer end, sharp inner tip, smoked lens, LED blade and the
-      // three-arrow daytime light
+      // curved blade headlights on the rolled nose corners. The outline was
+      // taken from the photo: pixels cast onto the model through the camera
+      // fitted to it, in this projection's coordinates. Sharp inner tip just
+      // above the grille corner, tall rounded outer end up on the fender.
       both((s) => {
-        // lamp drawn flat, then tilted so the outer end rises up the fender
-        const L = (x, y) => [s * x, 0.77 + (y - 0.77) * 1.9 + (x - 0.5) * 0.12 + 0.05];
-        const outline = [[0.5, 0.69], [0.62, 0.725], [0.76, 0.768], [0.9, 0.81], [1.02, 0.845], [1.1, 0.862], [1.155, 0.848], [1.18, 0.81], [1.17, 0.765], [1.12, 0.735], [1.0, 0.712], [0.84, 0.694], [0.66, 0.684]];
-        const shrink = (k, cx = 0.95, cy = 0.77) => outline.map(([x, y]) => L(cx + (x - cx) * k, cy + (y - cy) * k));
-        P.fill(smoothPath(shrink(1), true, 0.45), '#08090c');
-        P.fill(smoothPath(shrink(0.94), true, 0.45), P.linear(0, 1.1, 0, 0.7, [[0, '#46505f'], [0.45, '#1f2530'], [1, '#0b0e13']]), { metal: 0.7 });
-        // chrome reflector bowls in the outer half
-        for (const [x, y, rx, ry, col] of [[1.07, 0.8, 0.06, 0.04, '#677285'], [0.95, 0.775, 0.05, 0.034, '#525c6b'], [0.83, 0.75, 0.04, 0.027, '#434b58']]) {
-          const [cx, cy] = L(x, y);
-          P.fill(ellipse(cx, cy, rx, ry), col, { metal: 1 });
+        const L = ([x, y]) => [s * x, y];
+        const outline = [[0.291, 0.872], [0.349, 0.913], [0.4, 0.997], [0.455, 1.076], [0.51, 1.156], [0.575, 1.222], [0.627, 1.264], [0.694, 1.282], [0.768, 1.267], [0.823, 1.206], [0.847, 1.146], [0.836, 1.081], [0.795, 1.014], [0.732, 0.949], [0.666, 0.897], [0.599, 0.85], [0.525, 0.813], [0.457, 0.801], [0.379, 0.818]];
+        const shrink = (k, cx = 0.6, cy = 1.04) => outline.map(([x, y]) => L([cx + (x - cx) * k, cy + (y - cy) * k]));
+        P.fill(smoothPath(shrink(1), true, 0.4), '#08090c');
+        P.fill(smoothPath(shrink(0.92), true, 0.4), P.linear(0, 1.28, 0, 0.8, [[0, '#4a5463'], [0.45, '#222934'], [1, '#0c0f14']]), { metal: 0.7 });
+        // chrome reflector bowls along the upper half
+        for (const [x, y, rx, ry, col] of [[0.755, 1.17, 0.05, 0.06, '#6a7588'], [0.665, 1.1, 0.042, 0.052, '#566070'], [0.57, 1.01, 0.036, 0.045, '#47505e']]) {
+          P.fill(ellipse(s * x, y, rx, ry), col, { metal: 1 });
         }
-        // long LED blade across the lens
-        P.stroke(smoothPath([L(0.62, 0.712), L(0.8, 0.728), L(0.98, 0.748), L(1.06, 0.762)], false), '#ffffff', 0.016, { glow: '#ffffff' });
-        // three-arrow DRL in the upper outer corner
+        // LED blade sweeping up through the lens
+        P.stroke(smoothPath([L([0.42, 0.87]), L([0.487, 0.945]), L([0.6, 1.05]), L([0.702, 1.138])], false), '#ffffff', 0.016, { glow: '#ffffff' });
+        // three-arrow daytime light in the outer upper corner
         for (let k = 0; k < 3; k++) {
-          const x0 = 0.98 + k * 0.05;
-          P.stroke(line([L(x0, 0.79), L(x0 + 0.035, 0.825)]), '#ffffff', 0.013, { glow: '#ffffff' });
+          const x0 = 0.7 + k * 0.035;
+          P.stroke(line([L([x0, 1.16 + k * 0.012]), L([x0 + 0.03, 1.21 + k * 0.012])]), '#ffffff', 0.012, { glow: '#ffffff' });
         }
-        P.stroke(smoothPath([L(0.6, 0.716), L(0.76, 0.758), L(0.9, 0.798), L(1.02, 0.832)], false), 'rgba(220,230,245,0.5)', 0.006, { metal: 1 });
+        P.stroke(smoothPath([L([0.36, 0.92]), L([0.45, 1.05]), L([0.56, 1.17]), L([0.68, 1.25])], false), 'rgba(220,230,245,0.45)', 0.006, { metal: 1 });
       });
     },
     rear(P, c) {

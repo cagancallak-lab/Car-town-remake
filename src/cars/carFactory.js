@@ -510,13 +510,14 @@ function buildPartsV2(group, tpl, cfg, mats) {
   if (parts.roofRails) {
     const x0 = key.roofFront - 0.12;
     const x1 = key.roofRear + 0.08;
+    const railMat = parts.roofRails === 'silver' ? sharedMat('railAlu', () => new THREE.MeshStandardMaterial({ color: 0xc4c9cf, metalness: 0.9, roughness: 0.3 })) : trimMat();
     for (const s of [1, -1]) {
       const pts = [];
       for (let i = 0; i <= 12; i++) {
         const x = x0 + ((x1 - x0) * i) / 12;
         pts.push(new THREE.Vector3(x, fn.roofAt(x) - 0.012, s * (fn.roofWidthAt(x) - 0.11)));
       }
-      const rail = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 24, 0.016, 8, false), trimMat());
+      const rail = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 24, 0.016, 8, false), railMat);
       rail.castShadow = true;
       group.add(rail);
       for (const p of [pts[0], pts[pts.length - 1]]) {
@@ -677,6 +678,8 @@ function buildPartsV2(group, tpl, cfg, mats) {
     fin.position.x += 0.17;
     group.add(fin);
   }
+  // model-specific accessories (light pods, sail panels, cargo...)
+  spec.extraParts?.(group, { fn, spec, cfg, mats, trimMat, chromeMat, darkMat, sharedMat, sharedGeo, roundedBox, glassMat });
 }
 
 function createCarV2(tpl, cfg, { shadows = true, blobShadow = true } = {}) {
