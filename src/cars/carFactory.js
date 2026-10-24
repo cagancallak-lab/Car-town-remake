@@ -9,6 +9,7 @@ import { projectOverlay, roundedBox } from './carGeometry.js';
 import { Painter, crect, rrect, poly, circle, blob } from './painter.js';
 import { buildWheel } from './wheels.js';
 import { buildBodyV2, slopeProjection } from './bodyV2.js';
+import { makeKit } from './parts3d.js';
 
 export const FINISHES = ['gloss', 'metallic', 'pearl', 'matte', 'chrome', 'candy'];
 export const LIVERIES = ['none', 'stripes', 'side', 'flames', 'number', 'checker', 'bolt', 'tribal', 'police'];
@@ -265,6 +266,38 @@ function railFn(fn, b) {
   };
 }
 
+// Materials for the 3D detail parts, by key (see parts3d.js)
+const PART_MATS = {
+  chrome: () => new THREE.MeshStandardMaterial({ color: 0xe9ecf0, metalness: 1, roughness: 0.07 }),
+  satinChrome: () => new THREE.MeshStandardMaterial({ color: 0xc3c8ce, metalness: 0.95, roughness: 0.28 }),
+  darkChrome: () => new THREE.MeshStandardMaterial({ color: 0x3b4048, metalness: 1, roughness: 0.18 }),
+  glossBlack: () => new THREE.MeshPhysicalMaterial({ color: 0x0a0b0d, metalness: 0.1, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05 }),
+  satinBlack: () => new THREE.MeshStandardMaterial({ color: 0x17181b, metalness: 0.1, roughness: 0.6 }),
+  housing: () => new THREE.MeshStandardMaterial({ color: 0x1a1d23, metalness: 0.7, roughness: 0.35 }),
+  reflector: () => new THREE.MeshStandardMaterial({ color: 0xc9d1da, metalness: 1, roughness: 0.12 }),
+  lens: () => new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0, roughness: 0.03, transparent: true, opacity: 0.18, clearcoat: 1, clearcoatRoughness: 0.02, depthWrite: false }),
+  smokedLens: () => new THREE.MeshPhysicalMaterial({ color: 0x1a1d22, metalness: 0.2, roughness: 0.05, transparent: true, opacity: 0.55, clearcoat: 1, clearcoatRoughness: 0.02, depthWrite: false }),
+  redLens: () => new THREE.MeshPhysicalMaterial({ color: 0x8a0a10, metalness: 0.1, roughness: 0.08, transparent: true, opacity: 0.75, clearcoat: 1, depthWrite: false }),
+  led: () => new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 1.6, roughness: 0.3 }),
+  ledCool: () => new THREE.MeshStandardMaterial({ color: 0xeef5ff, emissive: 0xdfeaff, emissiveIntensity: 1.4, roughness: 0.3 }),
+  ledAmber: () => new THREE.MeshStandardMaterial({ color: 0xffb340, emissive: 0xff9a1a, emissiveIntensity: 1.2, roughness: 0.3 }),
+  ledRed: () => new THREE.MeshStandardMaterial({ color: 0xff2a2a, emissive: 0xff1010, emissiveIntensity: 1.3, roughness: 0.3 }),
+  pixelOff: () => new THREE.MeshStandardMaterial({ color: 0x4a4e56, metalness: 0.6, roughness: 0.25 }),
+  rubber: () => new THREE.MeshStandardMaterial({ color: 0x18191b, roughness: 0.9 }),
+  plate: () => new THREE.MeshStandardMaterial({ color: 0xf4f4f0, roughness: 0.45 }),
+};
+function partMaterial(item, mats) {
+  if (item.material) return item.material;
+  if (item.key === 'paint') return mats.paint;
+  if (item.key === 'roof') return mats.roof;
+  const make = PART_MATS[item.key] || PART_MATS.glossBlack;
+  return sharedMat(`part:${item.key}:${item.double ? 2 : 1}`, () => {
+    const m = make();
+    if (item.double) m.side = THREE.DoubleSide;
+    return m;
+  });
+}
+
 function decorMaterial(P, { emissive = false } = {}) {
   const m = new THREE.MeshStandardMaterial({
     map: P.texture('color'),
@@ -407,7 +440,14 @@ function getTemplateV2(spec, lod = 'high') {
     };
     add(P, { dir: new THREE.Vector3(0, 1, 0), uDir: new THREE.Vector3(1, 0, 0), u0: -L / 2, uSize: L, vDir: new THREE.Vector3(0, 0, -1), v0: -1.2, vSize: 2.4, minDot: 0.55, offset: off, keep });
   }
-  const tpl = { v2: true, lod, spec, body, fn, layers, overlayMats: lightMats, rail, c };
+  // real 3D details (lamps, grilles, badges) built on the shell
+  let parts3d = [];
+  if (spec.parts3d) {
+    const kit = makeKit(body.userData.surface, { lod });
+    spec.parts3d(kit, c);
+    parts3d = kit.finish().map((it) => (it.painter ? { ...it, material: decorMaterial(it.painter, { emissive: it.emissive }) } : it));
+  }
+  const tpl = { v2: true, lod, spec, body, fn, layers, overlayMats: lightMats, rail, c, parts3d };
   return tpl;
 }
 
@@ -727,6 +767,12 @@ function createCarV2(tpl, cfg, { shadows = true, blobShadow = true } = {}) {
     const m = new THREE.Mesh(o.geometry, o.material);
     m.renderOrder = o.order;
     m.userData.ownMaterial = true;
+    bodyGroup.add(m);
+  }
+  for (const it of tpl.parts3d || []) {
+    const m = new THREE.Mesh(it.geometry, partMaterial(it, mats));
+    m.renderOrder = it.order;
+    m.castShadow = shadows && it.shadow;
     bodyGroup.add(m);
   }
   buildPartsV2(bodyGroup, tpl, cfg, mats);

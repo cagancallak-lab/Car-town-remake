@@ -8,6 +8,7 @@
 
 import * as THREE from 'three';
 import { monotoneCurve, gridGeometry, ensureOutward, MAT } from './carGeometry.js';
+import { makeSurface } from './surface.js';
 
 const _e1 = new THREE.Vector3();
 const _e2 = new THREE.Vector3();
@@ -232,6 +233,20 @@ export function buildBodyV2(b, lod = 'high') {
         }
       }
     }
+    // raised nose corners: the fender tops stay high right to the front
+    // while the hood's leading edge dips between them (modern SUV faces)
+    if (b.noseLift) {
+      const nl = b.noseLift;
+      const h = nl.amount * smoothstep(half - nl.depth, half - nl.depth * 0.3, x) * (1 - s);
+      if (h > 0) {
+        for (let i = 0; i < pts.length; i++) {
+          if (cats[i] !== 'roof' && cats[i] !== 'glass' && cats[i] !== 'side') continue;
+          const z = pts[i][0];
+          const wgt = smoothstep(wb * (nl.z0 ?? 0.3), wb * (nl.z1 ?? 0.75), z) * (cats[i] === 'side' ? smoothstep(yS - 0.1, yB, pts[i][1]) : 1);
+          pts[i][1] += h * wgt;
+        }
+      }
+    }
     // hood power domes / ridges
     if (f.ridgeC) {
       const rh = f.ridgeC(x);
@@ -328,6 +343,7 @@ export function buildBodyV2(b, lod = 'high') {
   f.wrapFront = wrapFn(f, true, b.noseDepth ?? 0.45);
   f.wrapRear = wrapFn(f, false, b.tailDepth ?? 0.35);
   geo.userData.fn = f;
+  geo.userData.surface = makeSurface(rings, halfCount);
   return geo;
 }
 

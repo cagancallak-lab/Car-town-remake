@@ -8,6 +8,7 @@
 //   * Mercedes-AMG GLC (EV)  — yellow, illuminated vertical-bar grille with
 //                             chrome surround and star, slim LED headlights
 
+import * as THREE from 'three';
 import { greenhouse, roundedPoly, smoothPath, plate, gap, line, rrect, crect, circle, ellipse, poly, both, archBand, glassPanel } from './v2draw.js';
 
 const GLOSS_BLACK = '#0b0c0f';
@@ -176,13 +177,12 @@ export const IONIQ3 = {
   electric: true,
   scale: 0.6,
   key: { cowl: 1.02, roofFront: 0.04, roofRear: -1.68, rearBase: -1.96 },
-  frontUpperTilt: 0.55,
   body: {
     length: 4.12,
     width: 1.82,
     wheel: { radius: 0.338, width: 0.235, front: 1.29, rear: -1.39, archGap: 0.05 },
-    roof: [[-2.06, 0.7], [-2.052, 0.92], [-2.025, 1.06], [-1.96, 1.15], [-1.86, 1.23], [-1.68, 1.33], [-1.26, 1.43], [-0.66, 1.5], [-0.26, 1.51], [-0.08, 1.495], [0.04, 1.475], [0.49, 1.27], [1.02, 1.035], [1.24, 0.985], [1.516, 0.9], [1.743, 0.83], [1.897, 0.785], [1.988, 0.757], [2.033, 0.71], [2.06, 0.6]],
-    belt: [[-2.06, 0.68], [-2.048, 0.9], [-2.01, 1.04], [-1.96, 1.1], [-1.56, 1.11], [-0.56, 1.075], [0.44, 1.045], [1.02, 1.03], [1.07, 1.0], [1.24, 0.96], [1.516, 0.877], [1.743, 0.81], [1.897, 0.765], [1.988, 0.737], [2.033, 0.69], [2.06, 0.58]],
+    roof: [[-2.06, 0.7], [-2.052, 0.92], [-2.025, 1.06], [-1.96, 1.15], [-1.86, 1.23], [-1.68, 1.33], [-1.26, 1.43], [-0.66, 1.5], [-0.26, 1.51], [-0.08, 1.495], [0.04, 1.475], [0.49, 1.27], [1.02, 1.035], [1.24, 0.985], [1.516, 0.905], [1.743, 0.85], [1.897, 0.822], [1.988, 0.808], [2.033, 0.796], [2.05, 0.775], [2.06, 0.7]],
+    belt: [[-2.06, 0.68], [-2.048, 0.9], [-2.01, 1.04], [-1.96, 1.1], [-1.56, 1.11], [-0.56, 1.075], [0.44, 1.045], [1.02, 1.03], [1.07, 1.0], [1.24, 0.96], [1.516, 0.882], [1.743, 0.83], [1.897, 0.802], [1.988, 0.788], [2.033, 0.776], [2.05, 0.755], [2.06, 0.68]],
     sill: [[-2.06, 0.5], [-1.96, 0.36], [-1.76, 0.27], [-0.96, 0.22], [0.84, 0.22], [1.698, 0.25], [1.969, 0.26], [2.06, 0.3]],
     shoulder: [[-2.06, 0.7], [-1.86, 0.9], [0.04, 0.88], [1.04, 0.86], [1.607, 0.76], [2.06, 0.54]],
     wBody: [[-2.06, 0.84], [-1.46, 0.86], [0.04, 0.865], [1.335, 0.86], [2.06, 0.83]],
@@ -192,7 +192,7 @@ export const IONIQ3 = {
     noseExp: 3.2,
     tailDepth: 0.3,
     tailExp: 4,
-    noseRake: { depth: 0.37, y0: 0.4, y1: 0.78, amount: 0.06 },
+    noseRake: { depth: 0.37, y0: 0.4, y1: 0.8, amount: 0.025 },
     tailRake: { depth: 0.3, y0: 0.6, y1: 1.1, amount: 0.04 },
     flare: 0.032,
     rLow: 0.1,
@@ -207,6 +207,74 @@ export const IONIQ3 = {
   price: 38000,
   level: 3,
   blurb: 'Compact electric crossover with N Line attitude: pixel light bar, gloss-black A-shape bumper and star wheels.',
+  // Front lights in 3D, measured on the photo (wrap arc length s round the
+  // nose, height y): a thin segmented LED strip on the white nose at the
+  // corners, the Hyundai badge, and below them the thick glossy black
+  // "pixel" band with square lamps behind a smoked lens.
+  parts3d(K) {
+    const F = K.view('front');
+    const sm = (e0, e1, x) => {
+      const t = Math.max(0, Math.min(1, (x - e0) / (e1 - e0)));
+      return t * t * (3 - 2 * t);
+    };
+    const topY = (a) => 0.729 - 0.016 * Math.min(1, a / 0.5) ** 2 - 0.05 * sm(0.5, 0.6, a) - 0.003 * sm(0.6, 0.99, a);
+    const botY = (a) => 0.634 - 0.014 * Math.min(1, a / 0.55) ** 2;
+    const end = 0.985;
+    const band = [];
+    for (let i = 0; i <= 48; i++) {
+      const sv = -end + (2 * end * i) / 48;
+      band.push([sv, topY(Math.abs(sv))]);
+    }
+    for (let i = 48; i >= 0; i--) {
+      const sv = -end + (2 * end * i) / 48;
+      band.push([sv, botY(Math.abs(sv))]);
+    }
+    F.patch(band, { key: 'glossBlack', off: 0.002 });
+    F.lamp(band, { key: 'smokedLens', height: 0.009, bezel: 'satinBlack' });
+    for (const sd of [1, -1]) {
+      // big square pixels: the main lamps, lit
+      for (const a of [0.09, 0.26]) F.box(sd * a, 0.684, { w: 0.05, h: 0.042, d: 0.004, off: 0.009, key: 'led' });
+      F.box(sd * 0.43, 0.68, { w: 0.05, h: 0.042, d: 0.004, off: 0.009, key: 'pixelOff' });
+      // small pixels in the narrow outer part of the band
+      for (const a of [0.67, 0.725, 0.78, 0.835, 0.89]) F.box(sd * a, 0.641, { w: 0.026, h: 0.016, d: 0.004, off: 0.009, key: 'pixelOff' });
+      // segmented LED strip on the white nose above the band, round the corner
+      const drl = [];
+      for (let i = 0; i <= 14; i++) drl.push([sd * (0.585 + (0.4 * i) / 14), 0.711]);
+      for (let i = 14; i >= 0; i--) drl.push([sd * (0.585 + (0.4 * i) / 14), 0.689]);
+      F.patch(drl, { key: 'glossBlack', off: 0.002 });
+      for (let i = 0; i < 18; i++) {
+        const a = 0.6 + (0.375 * i) / 17;
+        F.box(sd * a, 0.7, { w: 0.017, h: 0.013, d: 0.004, off: 0.007, key: 'led' });
+      }
+      F.lamp(drl, { key: 'lens', height: 0.007, bezel: 'satinBlack' });
+    }
+    // Hyundai badge: chrome oval ring and slanted H, on the hood edge
+    const ring = [];
+    for (let i = 0; i <= 40; i++) {
+      const t = (i / 40) * Math.PI * 2;
+      ring.push([0.094 * Math.cos(t), 0.757 + 0.036 * Math.sin(t)]);
+    }
+    F.tube(ring, { radius: 0.005, key: 'satinChrome', closed: true });
+    const H = [];
+    const stroke = (x0, x1) => {
+      const sh = new THREE.Shape();
+      sh.moveTo(x0, -0.026);
+      sh.lineTo(x0 + 0.02, -0.026);
+      sh.lineTo(x1 + 0.02, 0.026);
+      sh.lineTo(x1, 0.026);
+      sh.closePath();
+      return sh;
+    };
+    H.push(stroke(-0.05, -0.034), stroke(0.026, 0.042));
+    const bar = new THREE.Shape();
+    bar.moveTo(-0.034, -0.004);
+    bar.lineTo(0.04, 0.0);
+    bar.lineTo(0.04, 0.009);
+    bar.lineTo(-0.032, 0.005);
+    bar.closePath();
+    H.push(bar);
+    F.shape(0, 0.757, H, { depth: 0.005, key: 'satinChrome', off: 0.001 });
+  },
   draw: {
     side(P, c) {
       const fn = c.fn;
@@ -233,7 +301,7 @@ export const IONIQ3 = {
       const span = c.frontSpan - 0.04;
       // gloss-black centre that widens downwards ("A" shape), white bumper
       // corners outside it, all-black lower bumper
-      const black = roundedPoly([[-0.42, 0.665], [0.42, 0.665], [0.74, 0.43], [span, 0.41], [span, 0.22], [-span, 0.22], [-span, 0.41], [-0.74, 0.43]], 0.03);
+      const black = roundedPoly([[-0.42, 0.628], [0.42, 0.628], [0.74, 0.43], [span, 0.41], [span, 0.22], [-span, 0.22], [-span, 0.41], [-0.74, 0.43]], 0.03);
       P.fill(black, GLOSS_BLACK);
       // lower grille slats and radar panel
       P.clip(roundedPoly([[-0.6, 0.42], [0.6, 0.42], [0.66, 0.28], [-0.66, 0.28]], 0.03), () => {
@@ -247,36 +315,11 @@ export const IONIQ3 = {
         P.fill(poly([[s * 0.45, 0.64], [s * 0.49, 0.64], [s * 0.7, 0.47], [s * 0.66, 0.47]]), '#202328', { metal: 0.4 });
       });
       P.fill(crect(0, 0.245, span * 1.7, 0.02, 0.01), '#3c3f46', { metal: 0.5 });
+      // clamshell hood shut line above the badge
+      P.stroke(smoothPath([[-span, 0.775], [-0.6, 0.792], [0, 0.797], [0.6, 0.792], [span, 0.775]], false), 'rgba(20,22,26,0.55)', 0.004);
       plate(P, 0, 0.5, '21 AJG 754', { w: 0.52, h: 0.11, bandText: 'TR' });
       P.text('IONIQ', 0, 0.433, 0.022, '#d8dbe0', { font: 'Arial, sans-serif', weight: '700', metal: 0.8 });
-      P.text('N Line', -0.6, 0.63, 0.03, '#d8dbe0', { italic: true, metal: 0.9, font: 'Arial, sans-serif', weight: '700' });
-    },
-    frontUpper(P, c) {
-      const span = c.frontSpan - 0.04;
-      // full-width pixel light bar on the white nose, under the hood shut
-      // line and clear of the black grille below
-      const bar = (x) => 0.765 + 0.05 * (x / span) ** 4;
-      const strip = [];
-      for (let i = 0; i <= 24; i++) {
-        const x = -span + (2 * span * i) / 24;
-        strip.push([x, bar(x) + 0.032]);
-      }
-      for (let i = 24; i >= 0; i--) {
-        const x = -span + (2 * span * i) / 24;
-        strip.push([x, bar(x) - 0.032]);
-      }
-      P.fill(roundedPoly(strip, 0.02), '#0b0c0e');
-      const n = 34;
-      for (let i = 0; i <= n; i++) {
-        const x = -span + 0.05 + ((span * 2 - 0.1) * i) / n;
-        const lit = i % 4 === 0;
-        P.fill(crect(x, bar(x) - 0.006, 0.036, 0.032, 0.004), lit ? '#ffffff' : '#3f434a', { glow: lit ? '#ffffff' : '#1d1f23' });
-      }
-      both((s) => P.fill(crect(s * 0.66, bar(0.66) + 0.019, 0.5, 0.014, 0.007), '#ffffff', { glow: '#ffffff' }));
-      P.stroke(line([[-span, bar(span) - 0.03], [0, 0.738], [span, bar(span) - 0.03]]), 'rgba(0,0,0,0.25)', 0.004);
-      // H logo on the hood above the bar
-      P.stroke(ellipse(0, 0.83, 0.08, 0.036), '#cfd3d9', 0.01, { metal: 1 });
-      P.text('H', 0, 0.83, 0.048, '#cfd3d9', { italic: true, metal: 1, font: 'Arial, sans-serif', weight: '900' });
+      P.text('N Line', -0.6, 0.6, 0.03, '#d8dbe0', { italic: true, metal: 0.9, font: 'Arial, sans-serif', weight: '700' });
     },
     rear(P, c) {
       const span = c.rearSpan - 0.1;
